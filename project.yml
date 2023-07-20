@@ -1,0 +1,19 @@
+name: Homefay
+options:
+  bundleIdPrefix: com.agungsptr
+  settings:
+    iOS:
+      TARGETED_DEVICE_FAMILY: "1"  # 1 for iPhone, 2 for iPad
+targets:
+  Homefay:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - Homefay
+    info:
+      path: App/Info.plist
+      properties:
+        UILaunchScreen: LaunchScreen
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
