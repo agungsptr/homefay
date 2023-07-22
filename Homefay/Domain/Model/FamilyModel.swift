@@ -8,7 +8,8 @@
 import Foundation
 
 struct FamilyModel: Identifiable {
-    let id: UUID
+    let id: UUID?
     var name: String
     var uniqueId: String
+    var createdBy: String
 }

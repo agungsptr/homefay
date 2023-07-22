@@ -8,7 +8,8 @@
 import Foundation
 
 protocol FamilyDataSource {
-    func findAll() throws -> [FamilyModel]
-    func create(family: FamilyModel) throws -> ()
+    func findAll() async throws -> [FamilyModel]
+    func create(family: FamilyModel) async throws -> Void
+    func delete(id: UUID) async throws -> Void
 }
 

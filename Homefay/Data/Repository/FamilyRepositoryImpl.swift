@@ -10,13 +10,17 @@ import Foundation
 struct FamilyRepositoryImpl: FamilyRepository {
     var dataSource: FamilyDataSource
     
-    func findAll() throws -> [FamilyModel] {
-        let data = try dataSource.findAll()
+    func findAll() async throws -> [FamilyModel] {
+        let data = try await dataSource.findAll()
         return data
     }
     
-    func create(family: FamilyModel) throws -> FamilyModel {
-        try dataSource.create(family: family)
+    func create(family: FamilyModel) async throws -> FamilyModel {
+        try await dataSource.create(family: family)
         return family
+    }
+    
+    func delete(id: UUID) async throws {
+        try await dataSource.delete(id: id)
     }
 }

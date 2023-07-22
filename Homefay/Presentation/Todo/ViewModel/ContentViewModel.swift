@@ -9,22 +9,19 @@ import Foundation
 
 @MainActor
 class ContentViewModel: ObservableObject {
-    @Published var families = [FamilyModel]()
+    @Published var families: [FamilyModel] = []
     @Published var family = FamilyModel(
         id: .init(),
         name: "",
-        uniqueId: generateRandomString(length: 6, includeLoweCase: false)
+        uniqueId: generateRandomString(length: 6, includeLoweCase: false),
+        createdBy: ""
     )
     
-    private let db: FamilyUseCase
-    
-    init() {
-        self.db = FamilyInjec().useCase()
-        findAll()
-    }
-    
-    func findAll() {
-        let res = self.db.findAll()
+    private lazy var db: FamilyUseCase = FamilyInjec().useCase()
+
+    func findAll() async {
+        print("fetch data")
+        let res = await self.db.findAll()
         switch res {
         case .success(let data):
             self.families = data
@@ -33,17 +30,28 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func save() {
+    func save() async {
         let dataModel = family
-        let res = self.db.create(family: dataModel)
+        let res = await self.db.create(family: dataModel)
         switch res {
         case .success(_):
-            self.findAll()
+            await self.findAll()
             self.family = FamilyModel(
                 id: .init(),
                 name: "",
-                uniqueId: generateRandomString(length: 6, includeLoweCase: false)
+                uniqueId: generateRandomString(length: 6, includeLoweCase: false),
+                createdBy: ""
             )
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func delete(id: UUID) async {
+        let res = await self.db.delete(id: id)
+        switch res {
+        case .success(_):
+            await self.findAll()
         case .failure(let error):
             print(error)
         }
