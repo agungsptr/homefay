@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject private var contentVM = ContentViewModel()
+    @StateObject private var contentVM = ContentViewModel()
     @State private var showingSheet = false
     @State private var isLoading = false
     
@@ -36,14 +36,10 @@ struct ContentView: View {
                     }
                 }
                 .refreshable {
-                    Task {
-                        await contentVM.findAll()
-                    }
+                    fetchData()
                 }
                 .onAppear {
-                    Task {
-                        await contentVM.findAll()
-                    }
+                    fetchData()
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -55,46 +51,64 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $showingSheet) {
-                    ZStack {
-                        VStack {
-                            Form {
-                                TextField("Name", text: $contentVM.family.name)
-                                TextField("Unique Invitation", text: $contentVM.family.uniqueId)
-                                    .disabled(true)
-                            }
-                            Button {
-                                Task {
-                                    isLoading = true
-                                    await contentVM.save()
-                                    showingSheet.toggle()
-                                    isLoading = false
-                                }
-                            } label: {
-                                Text("Save")
-                            }
-                        }
-                        if isLoading {
-                            ZStack {
-                                Color(.systemBackground)
-                                    .ignoresSafeArea(.all)
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle(tint: .black))
-                                    .scaleEffect(3)
-                            }
-                        }
-                    }
+                    SheetAddView(contentVM: contentVM, showingSheet: $showingSheet)
                 }
+            }
+            if isLoading {
+                LoadingView()
+            }
+        }
+    }
+    
+    private func fetchData() {
+        Task {
+            isLoading.toggle()
+            await contentVM.findAll()
+            isLoading.toggle()
+        }
+    }
+}
+
+private struct SheetAddView: View {
+    @StateObject var contentVM: ContentViewModel
+    @Binding var showingSheet: Bool
+    
+    @State private var isLoading = false
+    
+    var body: some View {
+        ZStack {
+            VStack {
+                Form {
+                    TextField("Name", text: $contentVM.family.name)
+                    TextField("Unique Invitation", text: $contentVM.family.uniqueId)
+                        .disabled(true)
+                }
+                Button {
+                    Task {
+                        isLoading = true
+                        await contentVM.save()
+                        showingSheet.toggle()
+                        isLoading = false
+                    }
+                } label: {
+                    Text("Save")
+                }
+            }
+            if isLoading {
+                LoadingView()
             }
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+private struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+        }
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

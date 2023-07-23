@@ -20,7 +20,6 @@ class ContentViewModel: ObservableObject {
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
 
     func findAll() async {
-        print("fetch data")
         let res = await self.db.findAll()
         switch res {
         case .success(let data):
