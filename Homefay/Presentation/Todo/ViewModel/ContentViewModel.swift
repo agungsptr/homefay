@@ -11,10 +11,10 @@ import Foundation
 class ContentViewModel: ObservableObject {
     @Published var families: [FamilyModel] = []
     @Published var family = FamilyModel(
-        id: .init(),
+        id: nil,
         name: "",
         uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-        createdBy: ""
+        createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
     )
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
@@ -29,9 +29,8 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func save() async {
-        let dataModel = family
-        let res = await self.db.create(family: dataModel)
+    func create() async {
+        let res = await self.db.create(family: family)
         switch res {
         case .success(_):
             await self.findAll()
@@ -39,7 +38,7 @@ class ContentViewModel: ObservableObject {
                 id: .init(),
                 name: "",
                 uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-                createdBy: ""
+                createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
             )
         case .failure(let error):
             print(error)
@@ -48,6 +47,24 @@ class ContentViewModel: ObservableObject {
     
     func delete(id: UUID) async {
         let res = await self.db.delete(id: id)
+        switch res {
+        case .success(_):
+            await self.findAll()
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func update(id: UUID) async {
+        let res = await self.db.update(
+            id: id,
+            family: FamilyModel(
+                id: nil,
+                name: "update",
+                uniqueId: "",
+                createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
+            )
+        )
         switch res {
         case .success(_):
             await self.findAll()

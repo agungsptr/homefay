@@ -11,6 +11,7 @@ protocol FamilyUseCase {
     func findAll() async -> Result<[FamilyModel], FetchDataError>
     func create(family: FamilyModel) async -> Result<FamilyModel, FetchDataError>
     func delete(id: UUID) async -> Result<Bool, FetchDataError>
+    func update(id: UUID, family: FamilyModel) async -> Result<Bool, FetchDataError>
 }
 
 struct FamilyUseCaseImpl: FamilyUseCase {
@@ -39,6 +40,16 @@ struct FamilyUseCaseImpl: FamilyUseCase {
     func delete(id: UUID) async -> Result<Bool, FetchDataError> {
         do {
             try await repository.delete(id: id)
+            return .success(true)
+        } catch {
+            print(error.localizedDescription)
+            return .failure(.CreateError)
+        }
+    }
+    
+    func update(id: UUID, family: FamilyModel) async -> Result<Bool, FetchDataError> {
+        do {
+            let _ = try await repository.update(id: id, family: family)
             return .success(true)
         } catch {
             print(error.localizedDescription)

@@ -42,18 +42,27 @@ struct FamilyCloudKitImpl: FamilyDataSource {
         return families
     }
     
-    func create(family: FamilyModel) async throws {
-        let familyResponse = FamilyResponse(
-            name: family.name,
-            uniqueId: family.uniqueId,
-            createdBy: family.createdBy
-        )
-        let record = try await container.save(familyResponse.record)
-        
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        if FamilyResponse(record: record) == nil {
+    func create(family: FamilyModel) async throws -> FamilyModel {
+        guard let familyResponse = FamilyResponse(model: family) else {
             throw CKError(.unknownItem)
         }
+        let req = try await container.save(familyResponse.record)
+        
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        guard let res = FamilyResponse(record: req) else {
+            throw CKError(.unknownItem)
+        }
+        return res.toModel
+    }
+    
+    func update(id: UUID, family: FamilyModel) async throws -> FamilyModel {
+        let record = try await container.record(for: uuidToCKRecordId(id))
+        record[FamilyKeys.name.rawValue] = family.name
+        let req = try await container.save(record)
+        guard let res = FamilyResponse(record: req) else {
+            throw CKError(.unknownItem)
+        }
+        return res.toModel
     }
     
     func delete(id: UUID) async throws {

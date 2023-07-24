@@ -8,9 +8,10 @@
 import Foundation
 
 struct FamilyMemberModel: Identifiable {
-    let id: UUID
-    let name: String
-    let username: String
-    let isSupervisor: Bool
-    let isLeader: Bool
+    let id: UUID?
+    var userId: String
+    var name: String
+    var username: String
+    var isSupervisor: Bool
+    var isLeader: Bool
 }

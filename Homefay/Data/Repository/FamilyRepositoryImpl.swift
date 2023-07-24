@@ -16,11 +16,16 @@ struct FamilyRepositoryImpl: FamilyRepository {
     }
     
     func create(family: FamilyModel) async throws -> FamilyModel {
-        try await dataSource.create(family: family)
-        return family
+        let req = try await dataSource.create(family: family)
+        return req
     }
     
     func delete(id: UUID) async throws {
         try await dataSource.delete(id: id)
+    }
+    
+    func update(id: UUID, family: FamilyModel) async throws -> FamilyModel {
+        let req = try await dataSource.update(id: id, family: family)
+        return req
     }
 }

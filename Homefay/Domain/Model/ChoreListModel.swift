@@ -8,7 +8,7 @@
 import Foundation
 
 struct ChoreListModel: Identifiable {
-    let id: UUID
-    let name: String
-    let createdBy: String
+    let id: UUID?
+    var name: String
+    var createdBy: UserModel
 }
