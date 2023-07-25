@@ -8,22 +8,22 @@
 import Foundation
 
 @MainActor
-class JoinFamilyViewModel: ObservableObject {
+class CreateFamilyViewModel: ObservableObject {
     @Published var families: [FamilyModel] = []
-    @Published var familyCode = ""
     @Published var family: FamilyModel = FamilyModel(
-        id: nil,
         name: "",
         uniqueId: generateRandomString(length: 6, includeLoweCase: false),
         createdBy: UserModel(
-            id: nil,
             name: "",
             appleId: "",
             email: ""
         )
     )
+    @Published var familyCode = ""
+    @Published var role = ""
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
+    private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
     
     func findAll() async {
         let res = await self.db.findAll()
@@ -42,8 +42,15 @@ class JoinFamilyViewModel: ObservableObject {
             self.family.id = data.id
             self.family.name = data.name
             self.family.uniqueId = data.uniqueId
-//            userFamilyId = data.id?.uuidString ?? ""
-            await self.findAll()
+            
+            let _ = await self.dbFamilyMember.create(
+                familyMember: FamilyMemberModel(
+                    familyId: data.id!.uuidString,
+                    name: self.family.createdBy.name,
+                    role: self.role,
+                    userId: self.family.createdBy.id!.uuidString
+                )
+            )
         case .failure(let error):
             print(error)
         }

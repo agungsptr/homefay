@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct JoinFamilyView: View {
-    @StateObject private var vm = JoinFamilyViewModel()
+    @StateObject private var vm = CreateFamilyViewModel()
     
     @State private var isShowAlertCreate = false
     @State private var isShowAlertJoin = false
@@ -45,6 +45,7 @@ struct JoinFamilyView: View {
                     }
                     .alert("Create Family", isPresented: $isShowAlertCreate) {
                         TextField("Family Name", text: $vm.family.name)
+                        TextField("Role", text: $vm.role)
                         Button {
                             Task {
                                 isLoading.toggle()

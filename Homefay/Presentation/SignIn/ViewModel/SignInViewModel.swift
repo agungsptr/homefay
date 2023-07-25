@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 class SignInViewModel: ObservableObject {
     @Published var user = UserModel(
-        id: nil, name: "", appleId: "", email: ""
+        name: "", appleId: "", email: ""
     )
     
     private lazy var db: UserUseCase = UserInjec().useCase()

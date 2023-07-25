@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct ChoreListModel: Identifiable {
-    let id: UUID?
+struct TaskListModel: Identifiable {
+    var id: UUID?
     var name: String
-    var createdBy: UserModel
+    var asigneeName: String
+    var asigneeId: String
 }
