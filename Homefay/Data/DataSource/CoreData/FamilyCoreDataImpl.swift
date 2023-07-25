@@ -8,19 +8,19 @@
 //import Foundation
 //import CoreData
 //
-//struct FamilyCoreDataImpl: FamilyDataSource {
+//struct FamilyCoreDataImpl {
 //    private let container: NSPersistentContainer
-//    
+//
 //    private func getEntityById(_ id: UUID) throws -> Family? {
 //        let req = Family.fetchRequest()
 //        req.fetchLimit = 1
 //        req.predicate = NSPredicate(format: "id = %@", id.uuidString)
-//        
+//
 //        let context = container.viewContext
 //        let entity =  try context.fetch(req)[0]
 //        return entity
 //    }
-//    
+//
 //    private func saveContext() {
 //        let context = container.viewContext
 //        if context.hasChanges {
@@ -31,7 +31,7 @@
 //            }
 //        }
 //    }
-//    
+//
 //    init() {
 //        container = NSPersistentContainer(name: "Model")
 //        container.loadPersistentStores { description, error in
@@ -40,7 +40,7 @@
 //            }
 //        }
 //    }
-//    
+//
 //    func findAll() async throws -> [FamilyModel] {
 //        let request = Family.fetchRequest()
 //        return try container.viewContext.fetch(request).map({ data in
@@ -52,7 +52,7 @@
 //            )
 //        })
 //    }
-//    
+//
 //    func create(family: FamilyModel) async throws {
 //        let familyEntity = Family(context: container.viewContext)
 //        familyEntity.id = family.id
@@ -61,7 +61,7 @@
 //        familyEntity.createdBy = family.createdBy
 //        saveContext()
 //    }
-//    
+//
 //    func delete(id: UUID) async throws {
 //        let familyEntity = try getEntityById(id)!
 //        let context = container.viewContext
@@ -73,8 +73,8 @@
 //            fatalError("Error: \(error.localizedDescription)")
 //        }
 //    }
-//    
+//
 //    func update(id: UUID, family: FamilyModel) async throws {
-//        
+//
 //    }
 //}

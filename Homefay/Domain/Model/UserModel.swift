@@ -8,7 +8,8 @@
 import Foundation
 
 struct UserModel: Identifiable {
-    let id: UUID?
+    var id: UUID?
     var name: String
-    var username: String
+    var appleId: String
+    var email: String
 }

@@ -1,24 +1,25 @@
 //
-//  ContentViewModel.swift
-//  CleanSwift
+//  JoinFamilyViewModel.swift
+//  Homefay
 //
-//  Created by Agung Saputra on 16/07/23.
+//  Created by Agung Saputra on 24/07/23.
 //
 
 import Foundation
 
 @MainActor
-class ContentViewModel: ObservableObject {
+class JoinFamilyViewModel: ObservableObject {
     @Published var families: [FamilyModel] = []
     @Published var family = FamilyModel(
         id: nil,
         name: "",
         uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-        createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
+        createdBy: UserModel(id: .init(), name: "dummy-name", appleId: UUID.init().uuidString, email: "dummy-email")
     )
+    @Published var familyCode = ""
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
-
+    
     func findAll() async {
         let res = await self.db.findAll()
         switch res {
@@ -32,14 +33,11 @@ class ContentViewModel: ObservableObject {
     func create() async {
         let res = await self.db.create(family: family)
         switch res {
-        case .success(_):
+        case .success(let data):
+            self.family.id = data.id
+            self.family.name = data.name
+            self.family.uniqueId = data.uniqueId
             await self.findAll()
-            self.family = FamilyModel(
-                id: .init(),
-                name: "",
-                uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-                createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
-            )
         case .failure(let error):
             print(error)
         }
@@ -62,7 +60,7 @@ class ContentViewModel: ObservableObject {
                 id: nil,
                 name: "update",
                 uniqueId: "",
-                createdBy: UserModel(id: UUID.init(), name: "dummy-name", username: "dummy-username")
+                createdBy: self.family.createdBy
             )
         )
         switch res {
