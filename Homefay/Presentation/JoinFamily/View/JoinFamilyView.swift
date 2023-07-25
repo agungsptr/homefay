@@ -16,10 +16,14 @@ struct JoinFamilyView: View {
     @State private var isLoading = false
     @State private var navigation = false
     
-    @AppStorage("userId") var userId: String?
-    @AppStorage("userName") var userName: String?
-    @AppStorage("userUsername") var userUsername: String?
-    @AppStorage("userFamilyId") var userFamilyId: String?
+    // User credential
+    @AppStorage("userId") var userId: String = "" // this value get by cloudkit not by auth apple
+    @AppStorage("userName") var userName: String = ""
+    @AppStorage("userAppleId") var userAppleId: String = ""
+    @AppStorage("userEmail") var userEmail: String = ""
+    
+    // Family Info
+    @AppStorage("userFamilyId") var userFamilyId: String = ""
     
     var body: some View {
         ZStack {
@@ -63,7 +67,7 @@ struct JoinFamilyView: View {
                     }
                     .alert("Get your family invitation code!", isPresented: $isShowAlertFamilyCode) {
                         Button {
-                            userFamilyId = vm.family.id?.uuidString
+                            userFamilyId = vm.family.id?.uuidString ?? ""
                         } label: {
                             Text("Done")
                                 .fontWeight(.bold)
@@ -102,6 +106,12 @@ struct JoinFamilyView: View {
             if isLoading {
                 LoadingView()
             }
+        }
+        .onAppear {
+            vm.family.createdBy.id = UUID(uuidString: userId)
+            vm.family.createdBy.name = userName
+            vm.family.createdBy.appleId = userAppleId
+            vm.family.createdBy.email = userEmail
         }
     }
 }

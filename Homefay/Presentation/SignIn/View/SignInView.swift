@@ -12,7 +12,7 @@ struct SignInView: View {
     @Environment(\.colorScheme) private var colorSchema
     
     @StateObject private var vm = SignInViewModel()
-    @State private var isLoading = true
+    @State private var isLoading = false
     
     var body: some View {
         ZStack {
@@ -38,7 +38,6 @@ struct SignInView: View {
                             vm.user.name = "\(firstName) \(lastName)"
                             vm.user.appleId = cred.user
                             vm.user.email = cred.email ?? ""
-                            
                             Task {
                                 isLoading.toggle()
                                 await vm.create()

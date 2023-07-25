@@ -26,6 +26,7 @@ class SignInViewModel: ObservableObject {
     @AppStorage("userFamilyId") var userFamilyId: String?
     
     func create() async {
+        print(user)
         let res = await self.db.create(user: user)
         switch res {
         case .success(let data):

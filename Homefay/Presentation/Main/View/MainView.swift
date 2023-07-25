@@ -10,13 +10,13 @@ import SwiftUI
 struct MainView: View {
     
     // User credential
-    @AppStorage("userId") var userId: String? // this value get by cloudkit not by auth apple
-    @AppStorage("userName") var userName: String?
-    @AppStorage("userAppleId") var userAppleId: String?
-    @AppStorage("userEmail") var userEmail: String?
+    @AppStorage("userId") var userId: String = "" // this value get by cloudkit not by auth apple
+    @AppStorage("userName") var userName: String = ""
+    @AppStorage("userAppleId") var userAppleId: String = ""
+    @AppStorage("userEmail") var userEmail: String = ""
     
     // Family Info
-    @AppStorage("userFamilyId") var userFamilyId: String?
+    @AppStorage("userFamilyId") var userFamilyId: String = ""
     
     var body: some View {
         TabView {

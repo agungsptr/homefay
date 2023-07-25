@@ -10,13 +10,18 @@ import Foundation
 @MainActor
 class JoinFamilyViewModel: ObservableObject {
     @Published var families: [FamilyModel] = []
-    @Published var family = FamilyModel(
+    @Published var familyCode = ""
+    @Published var family: FamilyModel = FamilyModel(
         id: nil,
         name: "",
         uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-        createdBy: UserModel(id: .init(), name: "dummy-name", appleId: UUID.init().uuidString, email: "dummy-email")
+        createdBy: UserModel(
+            id: nil,
+            name: "",
+            appleId: "",
+            email: ""
+        )
     )
-    @Published var familyCode = ""
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
     
@@ -37,6 +42,7 @@ class JoinFamilyViewModel: ObservableObject {
             self.family.id = data.id
             self.family.name = data.name
             self.family.uniqueId = data.uniqueId
+//            userFamilyId = data.id?.uuidString ?? ""
             await self.findAll()
         case .failure(let error):
             print(error)
