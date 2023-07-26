@@ -15,6 +15,16 @@ class TaskListViewModel: ObservableObject {
     @Published var taskList = TaskListModel(
         name: "", asigneeName: "", asigneeId: ""
     )
+    @Published var chore = ChoreModel(
+        title: "",
+        category: "",
+        level: "",
+        startTime: Date(),
+        endTime: Date(),
+        asignee: [],
+        depend: [""],
+        isDone: false
+    )
     
     private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
     private lazy var dbTaskList = TaskListInjec().useCase()
@@ -67,6 +77,24 @@ class TaskListViewModel: ObservableObject {
             self.taskList.name = data.name
             self.taskList.asigneeName = data.asigneeName
             self.taskList.asigneeId = data.asigneeId
+            await self.findAll()
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func createChore() async {
+        let res = await self.dbChores.create(chore: chore)
+        switch res {
+        case .success(let data):
+            self.chore.id = data.id
+            self.chore.title = data.title
+            self.chore.category = data.category
+            self.chore.level = data.level
+            self.chore.startTime = data.startTime
+            self.chore.endTime = data.endTime
+            self.chore.asignee = data.asignee
+            self.chore.depend = data.depend
             await self.findAll()
         case .failure(let error):
             print(error)

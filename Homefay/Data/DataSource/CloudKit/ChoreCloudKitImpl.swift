@@ -63,10 +63,11 @@ struct ChoreCloudKitImpl: ChoreDataSource {
         record[ChoreKeys.startTime.rawValue] = chore.startTime
         record[ChoreKeys.endTime.rawValue] = chore.endTime
         record[ChoreKeys.depend.rawValue] = chore.depend
+        record[ChoreKeys.isDone.rawValue] = chore.isDone
         
         var parserAsignee: [String] = []
         for asign in chore.asignee {
-            let str = "\(asign.id?.uuidString ?? ""),\(asign.name),\(asign.appleId),\(asign.email)"
+            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role),\(asign.userId)"
             parserAsignee.append(str)
         }
         record[ChoreKeys.asignee.rawValue] = parserAsignee

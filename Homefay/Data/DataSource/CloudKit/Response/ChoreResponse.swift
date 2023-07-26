@@ -13,10 +13,11 @@ struct ChoreResponse {
     var title: String
     var category: String
     var level: String
-    var startTime: String
-    var endTime: String
+    var startTime: Date
+    var endTime: Date
     var asignee: [String]
     var depend: [String]
+    var isDone: Bool
 }
 
 enum ChoreKeys: String {
@@ -29,6 +30,7 @@ enum ChoreKeys: String {
     case endTime
     case asignee
     case depend
+    case isDone
 }
 
 extension ChoreResponse {
@@ -37,10 +39,11 @@ extension ChoreResponse {
             let title = record[ChoreKeys.title.rawValue] as? String,
             let category = record[ChoreKeys.category.rawValue] as? String,
             let level = record[ChoreKeys.level.rawValue] as? String,
-            let startTime = record[ChoreKeys.startTime.rawValue] as? String,
-            let endTime = record[ChoreKeys.endTime.rawValue] as? String,
+            let startTime = record[ChoreKeys.startTime.rawValue] as? Date,
+            let endTime = record[ChoreKeys.endTime.rawValue] as? Date,
             let asignee = record[ChoreKeys.asignee.rawValue] as? [String],
-            let depend = record[ChoreKeys.depend.rawValue] as? [String]
+            let depend = record[ChoreKeys.depend.rawValue] as? [String],
+            let isDone = record[ChoreKeys.isDone.rawValue] as? Bool
         else {
             return nil
         }
@@ -53,7 +56,8 @@ extension ChoreResponse {
             startTime: startTime,
             endTime: endTime,
             asignee: asignee,
-            depend: depend
+            depend: depend,
+            isDone: isDone
         )
     }
 }
@@ -62,7 +66,7 @@ extension ChoreResponse {
     init?(model: ChoreModel) {
         var parserAsignee: [String] = []
         for asign in model.asignee {
-            let str = "\(asign.id?.uuidString ?? ""),\(asign.name),\(asign.appleId),\(asign.email)"
+            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role),\(asign.userId)"
             parserAsignee.append(str)
         }
         
@@ -73,7 +77,8 @@ extension ChoreResponse {
             startTime: model.startTime,
             endTime: model.endTime,
             asignee: parserAsignee,
-            depend: model.depend
+            depend: model.depend,
+            isDone: model.isDone
         )
     }
 }
@@ -88,18 +93,20 @@ extension ChoreResponse {
         record[ChoreKeys.endTime.rawValue] = endTime
         record[ChoreKeys.asignee.rawValue] = asignee
         record[ChoreKeys.depend.rawValue] = depend
+        record[ChoreKeys.isDone.rawValue] = isDone
         return record
     }
     
     var toModel: ChoreModel {
-        var parserAsignee: [UserModel] = []
+        var parserAsignee: [FamilyMemberModel] = []
         for asign in asignee {
             let arrData = asign.split(separator: ",")
-            let user = UserModel(
+            let user = FamilyMemberModel(
                 id: UUID(uuidString: "\(arrData[0])"),
-                name: "\(arrData[1])",
-                appleId: "\(arrData[2])",
-                email: "\(arrData[3])"
+                familyId: "\(arrData[1])",
+                name: "\(arrData[2])",
+                role: "\(arrData[3])",
+                userId: "\(arrData[4])"
             )
             parserAsignee.append(user)
         }
@@ -112,7 +119,8 @@ extension ChoreResponse {
             startTime: startTime,
             endTime: endTime,
             asignee: parserAsignee,
-            depend: depend
+            depend: depend,
+            isDone: isDone
         )
     }
 }

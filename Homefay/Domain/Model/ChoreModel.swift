@@ -12,8 +12,9 @@ struct ChoreModel: Identifiable {
     var title: String
     var category: String
     var level: String
-    var startTime: String
-    var endTime: String
-    var asignee: [UserModel]
+    var startTime: Date
+    var endTime: Date
+    var asignee: [FamilyMemberModel]
     var depend: [String]
+    var isDone: Bool
 }

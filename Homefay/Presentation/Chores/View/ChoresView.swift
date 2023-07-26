@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChoresView: View {
-    @State private var segment = 1
+    @State private var segment = 0
     @State private var searchText = ""
     @State private var isAdd = false
     
@@ -37,6 +37,9 @@ struct ChoresView: View {
             }
             .scrollIndicators(.hidden)
             .navigationTitle("Chores")
+            .navigationDestination(isPresented: $isAdd) {
+                ChoresAddView()
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
