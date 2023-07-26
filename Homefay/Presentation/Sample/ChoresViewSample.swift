@@ -224,9 +224,9 @@ struct ChoresViewSample: View {
                     }
                 }
                 .listStyle(.sidebar)
-//                .scrollContentBackground(.hidden)
-//                .background(Color("surfaceColor"))
                 .cornerRadius(10)
+                //                .scrollContentBackground(.hidden)
+                //                .background(Color("surfaceColor"))
             }
             .navigationTitle("Chores")
             .searchable(text: $searchField)

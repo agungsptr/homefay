@@ -14,7 +14,7 @@ struct ChoresView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            VStack {
                 Picker("", selection: $segment) {
                     Text("All Task").tag(0)
                     Text("Tasklist").tag(1)
@@ -33,6 +33,7 @@ struct ChoresView: View {
                 default:
                     AllTaskView(isAdd: $isAdd)
                 }
+                Spacer()
             }
             .scrollIndicators(.hidden)
             .navigationTitle("Chores")

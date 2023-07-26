@@ -1,5 +1,5 @@
 //
-//  TaskListCloudKitImpl.swift
+//  ChoreCloudKitImpl.swift
 //  Homefay
 //
 //  Created by Agung Saputra on 26/07/23.
@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-struct TaskListCloudKitImpl: TaskListDataSource {
+struct ChoreCloudKitImpl: ChoreDataSource {
     private let container = CKContainer.default().publicCloudDatabase
     
     private func uuidToCKRecordId(_ uuid: UUID) -> CKRecord.ID {
@@ -21,9 +21,9 @@ struct TaskListCloudKitImpl: TaskListDataSource {
         return recordID
     }
     
-    func findAll() async throws -> [TaskListModel] {
+    func findAll() async throws -> [ChoreModel] {
         let query = CKQuery(
-            recordType: TaskListKeys.type.rawValue,
+            recordType: ChoreKeys.type.rawValue,
             predicate: NSPredicate(value: true)
         )
         query.sortDescriptors = []
@@ -31,37 +31,48 @@ struct TaskListCloudKitImpl: TaskListDataSource {
         let result = try await container.records(matching: query)
         let records = result.matchResults.compactMap{ try? $0.1.get() }
         
-        var taskLists: [TaskListModel] = []
+        var families: [ChoreModel] = []
         for record in records {
-            guard let taskList = TaskListResponse(record: record) else {
+            guard let chore = ChoreResponse(record: record) else {
                 continue
             }
-            taskLists.append(taskList.toModel)
+            families.append(chore.toModel)
         }
         
-        return taskLists
+        return families
     }
     
-    func create(taskList: TaskListModel) async throws -> TaskListModel {
-        guard let taskListResponse = TaskListResponse(model: taskList) else {
+    func create(chore: ChoreModel) async throws -> ChoreModel {
+        guard let choreResponse = ChoreResponse(model: chore) else {
             throw CKError(.unknownItem)
         }
-        let req = try await container.save(taskListResponse.record)
+        let req = try await container.save(choreResponse.record)
         
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        guard let res = TaskListResponse(record: req) else {
+        guard let res = ChoreResponse(record: req) else {
             throw CKError(.unknownItem)
         }
         return res.toModel
     }
     
-    func update(id: UUID, taskList: TaskListModel) async throws -> TaskListModel {
+    func update(id: UUID, chore: ChoreModel) async throws -> ChoreModel {
         let record = try await container.record(for: uuidToCKRecordId(id))
-        record[TaskListKeys.name.rawValue] = taskList.name
-        record[TaskListKeys.asigneeName.rawValue] = taskList.asigneeName
-        record[TaskListKeys.asigneeId.rawValue] = taskList.asigneeId
+        record[ChoreKeys.title.rawValue] = chore.title
+        record[ChoreKeys.category.rawValue] = chore.category
+        record[ChoreKeys.level.rawValue] = chore.level
+        record[ChoreKeys.startTime.rawValue] = chore.startTime
+        record[ChoreKeys.endTime.rawValue] = chore.endTime
+        record[ChoreKeys.depend.rawValue] = chore.depend
+        
+        var parserAsignee: [String] = []
+        for asign in chore.asignee {
+            let str = "\(asign.id?.uuidString ?? ""),\(asign.name),\(asign.appleId),\(asign.email)"
+            parserAsignee.append(str)
+        }
+        record[ChoreKeys.asignee.rawValue] = parserAsignee
+        
         let req = try await container.save(record)
-        guard let res = TaskListResponse(record: req) else {
+        guard let res = ChoreResponse(record: req) else {
             throw CKError(.unknownItem)
         }
         return res.toModel

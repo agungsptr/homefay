@@ -9,14 +9,16 @@ import Foundation
 
 @MainActor
 class TaskListViewModel: ObservableObject {
+    @Published var familyMembers: [FamilyMemberModel] = []
     @Published var taskLists: [TaskListModel] = []
+    @Published var chores: [ChoreModel] = []
     @Published var taskList = TaskListModel(
         name: "", asigneeName: "", asigneeId: ""
     )
-    @Published var familyMembers: [FamilyMemberModel] = []
     
-    private lazy var db = TaskListInjec().useCase()
     private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
+    private lazy var dbTaskList = TaskListInjec().useCase()
+    private lazy var dbChores = ChoreInjec().useCase()
     
     func findAllFamilyMember() async {
         let res = await self.dbFamilyMember.findAll()
@@ -28,14 +30,44 @@ class TaskListViewModel: ObservableObject {
         }
     }
     
-    func create() async {
-        let res = await self.db.create(taskList: taskList)
+    func findAll() async {
+        // fetch data family member
+        let resFamilyMember = await self.dbFamilyMember.findAll()
+        switch resFamilyMember {
+        case .success(let dataFamilyMember):
+            self.familyMembers = dataFamilyMember
+        case .failure(let errorFamilyMember):
+            print(errorFamilyMember)
+        }
+        
+        // fetch data tasklist
+        let resTaskList = await self.dbTaskList.findAll()
+        switch resTaskList {
+        case .success(let dataTaskList):
+            self.taskLists = dataTaskList
+        case .failure(let errorTaskList):
+            print(errorTaskList)
+        }
+        
+        // fetch data chore
+        let resChore = await self.dbChores.findAll()
+        switch resChore {
+        case .success(let dataChore):
+            self.chores = dataChore
+        case .failure(let errorChore):
+            print(errorChore)
+        }
+    }
+    
+    func createTaskList() async {
+        let res = await self.dbTaskList.create(taskList: taskList)
         switch res {
         case .success(let data):
             self.taskList.id = data.id
             self.taskList.name = data.name
             self.taskList.asigneeName = data.asigneeName
             self.taskList.asigneeId = data.asigneeId
+            await self.findAll()
         case .failure(let error):
             print(error)
         }

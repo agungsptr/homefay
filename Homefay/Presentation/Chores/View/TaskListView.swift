@@ -18,7 +18,30 @@ struct TaskListView: View {
     var body: some View {
         ZStack {
             VStack {
-                
+                List {
+                    ForEach(vm.taskLists) { tl in
+                        Section {
+                            ChoreItemView()
+                        } header: {
+                            HStack {
+                                Text("\(tl.name)")
+                                    .textCase(.none)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color.black)
+                            }
+                        }
+                    }
+                }
+                .listStyle(.sidebar)
+                .cornerRadius(10)
+            }
+            .onAppear {
+                Task {
+                    isLoading.toggle()
+                    await vm.findAll()
+                    isLoading.toggle()
+                }
             }
             .sheet(isPresented: $isAdd) {
                 NavigationStack {
@@ -73,7 +96,7 @@ struct TaskListView: View {
                                 vm.taskList.asigneeId = selected?.userId ?? ""
                                 vm.taskList.asigneeName = selected?.name ?? ""
                                 isLoading.toggle()
-                                await vm.create()
+                                await vm.createTaskList()
                                 isLoading.toggle()
                                 isAdd.toggle()
                             }
@@ -159,10 +182,29 @@ private struct Badge: View {
 private struct LoadingView: View {
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5)
-                .ignoresSafeArea(.all)
             ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+        }
+    }
+}
+
+private struct ChoreItemView: View {
+    var body: some View {
+        HStack {
+            Image("paws")
+            VStack(alignment: .leading) {
+                Text("Cleaning Oyen Cage")
+                Text("08.00")
+                    .font(.caption)
+                Text("Medium")
+                    .font(.caption)
+                    .foregroundColor(Color("mediumTask"))
+            }
+            Spacer()
+            VStack {
+                Spacer()
+                Image("girlAvatar")
+            }
         }
     }
 }

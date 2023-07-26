@@ -8,12 +8,12 @@
 import Foundation
 
 struct ChoreModel: Identifiable {
-    let id: UUID?
+    var id: UUID?
     var title: String
+    var category: String
     var level: String
     var startTime: String
     var endTime: String
     var asignee: [UserModel]
     var depend: [String]
-    var createdBy: UserModel
 }
