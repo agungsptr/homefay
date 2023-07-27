@@ -6,3 +6,18 @@
 //
 
 import Foundation
+
+class FamilyMember: ObservableObject {
+    @Published var family: FamilyModel = FamilyModel(
+        name: "",
+        uniqueId: generateRandomString(length: 6, includeLoweCase: false),
+        createdBy: UserModel(
+            name: "",
+            appleId: "",
+            email: ""
+        )
+    )
+    
+    
+    
+}
