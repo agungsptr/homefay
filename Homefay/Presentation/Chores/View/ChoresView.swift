@@ -10,7 +10,10 @@ import SwiftUI
 struct ChoresView: View {
     @State private var segment = 0
     @State private var searchText = ""
-    @State private var isAdd = false
+    
+    @State private var allTaskAdd = false
+    @State private var taskListAdd = false
+    @State private var connectionAdd = false
     
     var body: some View {
         NavigationStack {
@@ -25,25 +28,39 @@ struct ChoresView: View {
                 
                 switch segment {
                 case 0:
-                    AllTaskView(isAdd: $isAdd)
+                    AllTaskView(isAdd: $allTaskAdd)
                 case 1:
-                    TaskListView(isAdd: $isAdd)
+                    TaskListView(isAdd: $taskListAdd)
                 case 2:
-                    ConnectionView(isAdd: $isAdd)
+                    ConnectionView(isAdd: $connectionAdd)
                 default:
-                    AllTaskView(isAdd: $isAdd)
+                    AllTaskView(isAdd: $allTaskAdd)
                 }
                 Spacer()
             }
             .scrollIndicators(.hidden)
             .navigationTitle("Chores")
-            .navigationDestination(isPresented: $isAdd) {
+            .navigationDestination(isPresented: $allTaskAdd) {
                 ChoresAddView()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        isAdd = true
+                        if segment == 0 {
+                            allTaskAdd = true
+                        } else {
+                            allTaskAdd = false
+                        }
+                        if segment == 1 {
+                            taskListAdd = true
+                        } else {
+                            taskListAdd = false
+                        }
+                        if segment == 3 {
+                            connectionAdd = true
+                        } else {
+                            connectionAdd = false
+                        }
                     } label: {
                         switch segment {
                         case 0:

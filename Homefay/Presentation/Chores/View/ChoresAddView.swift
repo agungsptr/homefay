@@ -32,6 +32,27 @@ struct ChoresAddView: View {
                     }
                     
                     Section {
+                        Picker("", selection: $vm.chore.listId) {
+                            ForEach(vm.taskLists) { tl in
+                                Text(tl.name).tag(tl.id?.uuidString)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(maxHeight: 150)
+                    } header: {
+                        HStack {
+                            Text("Task List")
+                                .font(.body)
+                                .foregroundColor(Color.black)
+                                .textCase(.none)
+                            Spacer()
+                            Text(vm.chore.category)
+                                .textCase(.none)
+                                .font(.body)
+                        }
+                    }
+                    
+                    Section {
                         Picker("", selection: $vm.chore.category) {
                             Text("Garden").tag("Garden")
                             Text("Launder").tag("Launder")
@@ -203,7 +224,7 @@ struct ChoresAddView: View {
         .onAppear {
             Task {
                 isLoading.toggle()
-                await vm.findAllFamilyMember()
+                await vm.findAll()
                 isLoading.toggle()
             }
         }
@@ -254,17 +275,10 @@ private struct Badge: View {
                 .foregroundColor(.gray)
         }
         .onAppear {
-            switch imgName {
-            case "Dad":
-                imgAsset = "Father"
-            case "Mom":
-                imgAsset = "Mother"
-            case "Boy":
-                imgAsset = "Boy"
-            case "Girl":
-                imgAsset = "Girl"
-            default:
-                break
+            if imgName == "" {
+                imgAsset = "Dad"
+            } else {
+                imgAsset = imgName
             }
         }
     }

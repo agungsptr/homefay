@@ -24,6 +24,7 @@ class CreateFamilyViewModel: ObservableObject {
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
     private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
+    private lazy var dbProfile = ProfileInjec().useCase()
     
     func findAll() async {
         let res = await self.db.findAll()
@@ -49,6 +50,22 @@ class CreateFamilyViewModel: ObservableObject {
                     name: self.family.createdBy.name,
                     role: self.role,
                     userId: self.family.createdBy.id!.uuidString
+                )
+            )
+            
+            let _ = await self.dbProfile.create(
+                profile: ProfileModel(
+                    preference: [""],
+                    availSun: [Date(), Date()],
+                    availMon: [Date(), Date()],
+                    availTue: [Date(), Date()],
+                    availWed: [Date(), Date()],
+                    availThu: [Date(), Date()],
+                    availFri: [Date(), Date()],
+                    availSat: [Date(), Date()],
+                    dnd: false,
+                    userId: self.family.createdBy.id!.uuidString,
+                    avatar: ""
                 )
             )
         case .failure(let error):

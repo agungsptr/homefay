@@ -7,17 +7,19 @@
 
 import Foundation
 
-class FamilyMember: ObservableObject {
-    @Published var family: FamilyModel = FamilyModel(
-        name: "",
-        uniqueId: generateRandomString(length: 6, includeLoweCase: false),
-        createdBy: UserModel(
-            name: "",
-            appleId: "",
-            email: ""
-        )
-    )
+@MainActor
+class FamilyViewModel: ObservableObject {
+    @Published var families: [FamilyMemberModel] = []
     
+    private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
     
-    
+    func findAll() async {
+        let res = await self.dbFamilyMember.findAll()
+        switch res {
+        case .success(let data):
+            self.families = data
+        case .failure(let error):
+            print(error)
+        }
+    }
 }

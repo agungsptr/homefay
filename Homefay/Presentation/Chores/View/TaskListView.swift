@@ -21,6 +21,9 @@ struct TaskListView: View {
                 List {
                     ForEach(vm.taskLists) { tl in
                         Section {
+                            ForEach(vm.chores) { ch in
+//                                if ch.
+                            }
                             ChoreItemView()
                         } header: {
                             HStack {
@@ -163,17 +166,10 @@ private struct Badge: View {
                 .foregroundColor(.gray)
         }
         .onAppear {
-            switch imgName {
-            case "Dad":
-                imgAsset = "Father"
-            case "Mom":
-                imgAsset = "Mother"
-            case "Boy":
-                imgAsset = "Boy"
-            case "Girl":
-                imgAsset = "Girl"
-            default:
-                break
+            if imgName == "" {
+                imgAsset = "Dad"
+            } else {
+                imgAsset = imgName
             }
         }
     }

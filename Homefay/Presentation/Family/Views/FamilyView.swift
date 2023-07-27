@@ -7,130 +7,122 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
+struct FamilyView: View {
     
     @State private var searchText = ""
+    @StateObject private var vm = FamilyViewModel()
+    @State private var isLoading = false
     
     var body: some View {
         NavigationStack {
-            List {
-                HStack {
-                    Image("profil")
+            ZStack {
+                List {
+                    ForEach(vm.families) { fm in
+                        ItemFamily(name: fm.name, img: fm.role)
+                    }
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color("surfaceColor"))
+                .cornerRadius(10)
+                .navigationTitle("Keluarga Haji Agung")
+                .padding()
+                .toolbar {
+                    //                //MARK: Edit Button
+                    //                ToolbarItem(placement: .navigationBarTrailing) {
+                    //                    Button {
+                    //                        //Button
+                    //                    } label: {
+                    //                        Image(systemName: "pencil")
+                    //                    }
+                    //                }
+                    //
+                    //                //MARK: Delete Button
+                    //                ToolbarItem(placement: .navigationBarTrailing) {
+                    //                    Button {
+                    //                        //Button
+                    //                    } label: {
+                    //                        Image(systemName: "trash.fill")
+                    //                    }
+                    //                }
                     
-                    VStack(alignment: .leading) {
-                        Text("Ayah")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        HStack {
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet").resizable()
-                                .frame(width: 20, height: 20)
-                            
+                    //MARK: Share link Button
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            //
+                        } label: {
+                            Image(systemName: "link")
                         }
                     }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        Text("available")
-                            .padding(.vertical)
-                            .foregroundColor(Color("mainColor"))
-                        Spacer()
-                    }
                 }
-                
-                
-                
-                HStack {
-                    Image("profil")
-                    
-                    VStack(alignment: .leading) {
-                        Text("Ibu")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        HStack {
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            Image("dompet")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                            
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        Text("busy")
-                            .padding(.vertical)
-                            .foregroundColor(Color.gray)
-                        Spacer()
-                    }
-                        
-                }
+                .padding(.horizontal,0)
             }
-            .scrollContentBackground(.hidden)
-            .background(Color("surfaceColor"))
-            .cornerRadius(10)
-            
-            
-            
-            .navigationTitle("Keluarga Haji Agung")
-            .padding()
-            
-            .toolbar {
-//                //MARK: Edit Button
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    Button {
-//                        //Button
-//                    } label: {
-//                        Image(systemName: "pencil")
-//                    }
-//                }
-//
-//                //MARK: Delete Button
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    Button {
-//                        //Button
-//                    } label: {
-//                        Image(systemName: "trash.fill")
-//                    }
-//                }
-                
-                //MARK: Share link Button
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        //
-                    } label: {
-                        Image(systemName: "link")
-                    }
-                }
+            if isLoading {
+                LoadingView()
             }
-            .padding(.horizontal,0)
+        }
+        .onAppear {
+            Task {
+                isLoading.toggle()
+                await vm.findAll()
+                isLoading.toggle()
+            }
         }
         .searchable(text: $searchText)
     }
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
+private struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+        }
+    }
+}
+
+struct ItemFamily: View {
+    var name: String
+    var img: String?
+    
+    var body: some View {
+        HStack {
+            Image(img ?? "profil")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 67)
+            VStack(alignment: .leading) {
+                Text(name)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                HStack {
+                    Image("dompet")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                    Image("dompet")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                    Image("dompet")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                    Image("dompet").resizable()
+                        .frame(width: 20, height: 20)
+                }
+            }
+            
+            Spacer()
+            
+            VStack {
+                Text("available")
+                    .padding(.vertical)
+                    .foregroundColor(Color("mainColor"))
+                Spacer()
+            }
+        }
+    }
+}
+
+struct FamilyView_Previews: PreviewProvider {
     static var previews: some View {
-        SwiftUIView()
+        FamilyView()
     }
 }

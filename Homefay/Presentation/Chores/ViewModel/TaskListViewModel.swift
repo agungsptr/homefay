@@ -23,7 +23,8 @@ class TaskListViewModel: ObservableObject {
         endTime: Date(),
         asignee: [],
         depend: [""],
-        isDone: false
+        isDone: false,
+        listId: ""
     )
     
     private lazy var dbFamilyMember = FamilyMemberInjec().useCase()

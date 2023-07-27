@@ -17,4 +17,5 @@ struct ChoreModel: Identifiable {
     var asignee: [FamilyMemberModel]
     var depend: [String]
     var isDone: Bool
+    var listId: String
 }

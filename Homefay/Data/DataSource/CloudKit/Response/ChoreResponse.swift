@@ -18,6 +18,7 @@ struct ChoreResponse {
     var asignee: [String]
     var depend: [String]
     var isDone: Bool
+    var listId: String
 }
 
 enum ChoreKeys: String {
@@ -31,6 +32,7 @@ enum ChoreKeys: String {
     case asignee
     case depend
     case isDone
+    case listId
 }
 
 extension ChoreResponse {
@@ -43,7 +45,8 @@ extension ChoreResponse {
             let endTime = record[ChoreKeys.endTime.rawValue] as? Date,
             let asignee = record[ChoreKeys.asignee.rawValue] as? [String],
             let depend = record[ChoreKeys.depend.rawValue] as? [String],
-            let isDone = record[ChoreKeys.isDone.rawValue] as? Bool
+            let isDone = record[ChoreKeys.isDone.rawValue] as? Bool,
+            let listId = record[ChoreKeys.listId.rawValue] as? String
         else {
             return nil
         }
@@ -57,7 +60,8 @@ extension ChoreResponse {
             endTime: endTime,
             asignee: asignee,
             depend: depend,
-            isDone: isDone
+            isDone: isDone,
+            listId: listId
         )
     }
 }
@@ -78,7 +82,8 @@ extension ChoreResponse {
             endTime: model.endTime,
             asignee: parserAsignee,
             depend: model.depend,
-            isDone: model.isDone
+            isDone: model.isDone,
+            listId: model.listId
         )
     }
 }
@@ -94,6 +99,7 @@ extension ChoreResponse {
         record[ChoreKeys.asignee.rawValue] = asignee
         record[ChoreKeys.depend.rawValue] = depend
         record[ChoreKeys.isDone.rawValue] = isDone
+        record[ChoreKeys.listId.rawValue] = listId
         return record
     }
     
@@ -120,7 +126,8 @@ extension ChoreResponse {
             endTime: endTime,
             asignee: parserAsignee,
             depend: depend,
-            isDone: isDone
+            isDone: isDone,
+            listId: listId
         )
     }
 }

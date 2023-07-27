@@ -24,11 +24,11 @@ struct MainView: View {
                 .tabItem {
                     Label("Chores", systemImage: "square.grid.2x2.fill")
                 }
-            SampleTabView()
+            FamilyView()
                 .tabItem {
                     Label("Family", systemImage: "person.2.fill")
                 }
-            SampleTabView()
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }

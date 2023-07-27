@@ -45,7 +45,7 @@ struct JoinFamilyView: View {
                     }
                     .alert("Create Family", isPresented: $isShowAlertCreate) {
                         TextField("Family Name", text: $vm.family.name)
-                        TextField("Role", text: $vm.role)
+//                        TextField("Role", text: $vm.role)
                         Button {
                             Task {
                                 isLoading.toggle()
