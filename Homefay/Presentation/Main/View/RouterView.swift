@@ -10,11 +10,14 @@ import SwiftUI
 struct RouterView: View {
     @AppStorage("userFamilyId") var userFamilyId: String?
     @AppStorage("userId") var userId: String?
+    @AppStorage("isOnBoarding") var isOnBoarding = false
     
     var body: some View {
-        if userId != nil && userFamilyId != nil {
+        if !isOnBoarding {
+            HomefaySplashScreen()
+        } else if isOnBoarding && userId != nil && userFamilyId != nil {
             MainView()
-        } else if userId != nil && userFamilyId == nil  {
+        } else if isOnBoarding && userId != nil && userFamilyId == nil  {
             JoinFamilyView()
         } else {
             SignInView()

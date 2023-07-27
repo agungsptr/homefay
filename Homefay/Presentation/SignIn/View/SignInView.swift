@@ -17,8 +17,12 @@ struct SignInView: View {
     var body: some View {
         ZStack {
             VStack {
-                Text("HomeFey")
-                    .font(.headline)
+                Image("signInIlustration")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 350, height: 350)
+                Text("HomeFay")
+                    .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
                 Text("Take Part Your Way")

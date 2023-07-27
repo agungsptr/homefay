@@ -21,35 +21,36 @@ private let onBoardingSteps = [
 struct OnboardingView: View {
     
     @State private var currentStep = 0
-    @AppStorage("sign_in") var wasSigned: Bool = false
+    @AppStorage("isOnBoarding") var wasSigned: Bool = false
     let transition: AnyTransition = .asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
     
     var body: some View {
         NavigationView{
             VStack {
-                if currentStep != onBoardingSteps.count - 1 {
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            self.currentStep = onBoardingSteps.count - 1
-                        }) {
-                            Text("Skip")
-                                .padding(.horizontal, 28)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                else{
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                        }) {
-                            Text("Skip")
-                                .padding(.horizontal, 28)
-                                .foregroundColor(.white)
-                        }
-                    }
-                }
+//                if currentStep != onBoardingSteps.count - 1 {
+//                    HStack {
+//                        Spacer()
+//                        Button(action: {
+//                            self.currentStep = onBoardingSteps.count - 1
+//                        }) {
+//                            Text("Skip")
+//                                .padding(.horizontal, 28)
+//                                .foregroundColor(.gray)
+//                        }
+//                    }
+//                    Spacer()
+//                }
+//                else{
+//                    HStack {
+//                        Spacer()
+//                        Button(action: {
+//                        }) {
+//                            Text("Skip")
+//                                .padding(.horizontal, 28)
+//                                .foregroundColor(.white)
+//                        }
+//                    }
+//                }
 //                Text("Homefay")
 //                    .font(.system(size: 34))
 //                    .bold()
@@ -108,21 +109,18 @@ struct OnboardingView: View {
                     }
                     .buttonStyle(.plain)
                 } else {
-                    NavigationLink(
-                        destination: Text("test"),
-                        label: {
-                            Text("Get Started!")
-                                .bold()
-                                .padding(16)
-                                .frame(maxWidth: .infinity)
-                                .background(Color("PrimaryColor"))
-                                .cornerRadius(16)
-                                .padding(.horizontal, 16)
-                                .foregroundColor(.white)
-                                .onTapGesture {
-                                    wasSigned = true
-                                }
-                        })
+                    Button {
+                        wasSigned = true
+                    } label: {
+                        Text("Get Started!")
+                            .bold()
+                            .padding(16)
+                            .frame(maxWidth: .infinity)
+                            .background(Color("PrimaryColor"))
+                            .cornerRadius(16)
+                            .padding(.horizontal, 16)
+                            .foregroundColor(.white)
+                    }
                 }
             }
             .background(Color.white)
