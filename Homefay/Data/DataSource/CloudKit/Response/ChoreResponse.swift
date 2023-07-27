@@ -107,6 +107,7 @@ extension ChoreResponse {
         var parserAsignee: [FamilyMemberModel] = []
         for asign in asignee {
             let arrData = asign.split(separator: ",")
+            print("DEBUG: \(arrData)")
             let user = FamilyMemberModel(
                 id: UUID(uuidString: "\(arrData[0])"),
                 familyId: "\(arrData[1])",

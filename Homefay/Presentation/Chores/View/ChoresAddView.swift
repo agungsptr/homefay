@@ -34,7 +34,7 @@ struct ChoresAddView: View {
                     Section {
                         Picker("", selection: $vm.chore.listId) {
                             ForEach(vm.taskLists) { tl in
-                                Text(tl.name).tag(tl.id?.uuidString)
+                                Text(tl.name).tag("\(tl.id?.uuidString ?? "")")
                             }
                         }
                         .pickerStyle(.wheel)
