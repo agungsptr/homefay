@@ -95,16 +95,18 @@ struct ItemFamily: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 HStack {
-                    Image("dompet")
+                    Image("Garden")
                         .resizable()
                         .frame(width: 20, height: 20)
-                    Image("dompet")
+                    Image("Shopping")
                         .resizable()
                         .frame(width: 20, height: 20)
-                    Image("dompet")
+                    Image("PetCare")
                         .resizable()
                         .frame(width: 20, height: 20)
-                    Image("dompet").resizable()
+                    Image("Kitchen").resizable()
+                        .frame(width: 20, height: 20)
+                    Image("HouseCleaning").resizable()
                         .frame(width: 20, height: 20)
                 }
             }

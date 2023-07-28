@@ -19,7 +19,7 @@ struct ChoresAddView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                List {
+                Form {
                     Section {
                         TextField("chores", text: $vm.chore.title)
                     } header: {
@@ -28,48 +28,52 @@ struct ChoresAddView: View {
                                 .font(.body)
                                 .foregroundColor(Color.black)
                                 .textCase(.none)
+                                .padding(.top, -10)
                         }
                     }
                     
                     Section {
                         Picker("", selection: $vm.chore.listId) {
                             ForEach(vm.taskLists) { tl in
-                                Text(tl.name).tag("\(tl.id?.uuidString ?? "")")
+                                Text(tl.name).tag(tl.id!.uuidString)
                             }
                         }
                         .pickerStyle(.wheel)
-                        .frame(maxHeight: 150)
+                        .frame(maxHeight: 100)
+                        
                     } header: {
                         HStack {
                             Text("Task List")
                                 .font(.body)
                                 .foregroundColor(Color.black)
                                 .textCase(.none)
-                            Spacer()
-                            Text(vm.chore.category)
-                                .textCase(.none)
-                                .font(.body)
+                                .padding(.top, -20)
                         }
                     }
                     
                     Section {
                         Picker("", selection: $vm.chore.category) {
-                            Text("Garden").tag("Garden")
-                            Text("Launder").tag("Launder")
-                            Text("Kitchen").tag("Kitchen")
+                            Text("House Cleaning").tag("House Cleaning")
+                            Text("Wash Clothes").tag("Wash Clothes")
+                            Text("Tidy Up The Bed").tag("Tidy Up The Bed")
+                            Text("Cooking Food").tag("Cooking Food")
+                            Text("Cleaning The Kitchen").tag("Cleaning The Kitchen")
+                            Text("Caring For Plants").tag("Caring For Plants")
+                            Text("Parenting").tag("Parenting")
+                            Text("Caring For Pets").tag("Caring For Pets")
+                            Text("Shop The Needs").tag("Shop The Needs")
+                            Text("Financial Management").tag("Financial Management")
                         }
                         .pickerStyle(.wheel)
-                        .frame(maxHeight: 150)
+                        .frame(maxHeight: 100)
+                        .padding(.top, -20)
                     } header: {
                         HStack {
                             Text("Category")
                                 .font(.body)
                                 .foregroundColor(Color.black)
                                 .textCase(.none)
-                            Spacer()
-                            Text(vm.chore.category)
-                                .textCase(.none)
-                                .font(.body)
+                                .padding(.top, -20)
                         }
                     }
                     
@@ -89,10 +93,12 @@ struct ChoresAddView: View {
                                 .font(.body)
                                 .foregroundColor(Color.black)
                                 .textCase(.none)
+                                .padding(.top, -20)
                             Spacer()
                             Text("\(vm.chore.level)")
                                 .textCase(.none)
                                 .font(.body)
+                                .padding(.top, -20)
                         }
                     }
                     
@@ -139,18 +145,19 @@ struct ChoresAddView: View {
                                 .font(.body)
                                 .foregroundColor(Color.black)
                                 .textCase(.none)
+                                .padding(.top, -20)
                             Spacer()
                             Text("\(vm.chore.startTime.formatted(date: .omitted, time: .shortened)) - \(vm.chore.endTime.formatted(date: .omitted, time: .shortened))")
                                 .font(.body)
                                 .textCase(.none)
+                                .padding(.top, -20)
                         }
                     }
                     
                     Section {
                         Rectangle()
                             .foregroundColor(.clear)
-                            .frame(width: 358, height: 97)
-                            .background(.white)
+                            .frame(height: 100)
                             .overlay {
                                 ScrollView(.horizontal) {
                                     HStack(spacing: 18) {
@@ -175,10 +182,7 @@ struct ChoresAddView: View {
                                 .font(.body)
                                 .textCase(.none)
                                 .foregroundColor(Color.black)
-                            Spacer()
-//                            Text(selected?.name ?? "")
-//                                .textCase(.none)
-//                                .font(.body)
+                                .padding(.top, -20)
                         }
                     }
                     
@@ -194,11 +198,9 @@ struct ChoresAddView: View {
                             Image(systemName: "plus")
                                 .font(.body)
                         }
+                        .padding(.top, -20)
                     }
                 }
-                .listStyle(.sidebar)
-                
-                Spacer()
                 
                 Button {
                     Task {

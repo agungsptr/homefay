@@ -19,14 +19,18 @@ struct AllTaskView: View {
                 Section {
                     ForEach(vm.chores) { ch in
                         if !ch.isDone {
-                            ChoreItemView(
-                                ctg: ch.category,
-                                title: ch.title,
-                                dificulty: ch.level,
-                                startTime: ch.startTime,
-                                endTime: ch.endTime,
-                                asignRole: ch.asignee.count > 0 ? ch.asignee[0].role : ""
-                            )
+                            NavigationLink {
+                                ChoresDetailView(chore: ch)
+                            } label: {
+                                ChoreItemView(
+                                    ctg: ch.category,
+                                    title: ch.title,
+                                    dificulty: ch.level,
+                                    startTime: ch.startTime,
+                                    endTime: ch.endTime,
+                                    asignRole: ch.asignee.count > 0 ? ch.asignee[0].role : "Dad"
+                                )
+                            }
                         }
                     }
                 } header: {
@@ -97,6 +101,9 @@ private struct ChoreItemView: View {
     var body: some View {
         HStack {
             Image(ctg)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 46)
             VStack(alignment: .leading) {
                 Text(title)
                 Text("\(startTime.formatted(date: .omitted, time: .shortened)) - \(endTime.formatted(date: .omitted, time: .shortened))")
@@ -111,8 +118,9 @@ private struct ChoreItemView: View {
                 Image(asignRole)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 28)
+                    .frame(width: 32)
             }
+            .padding(.vertical, 6)
         }
         .padding(.vertical, 2)
     }

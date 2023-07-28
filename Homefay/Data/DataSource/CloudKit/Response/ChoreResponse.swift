@@ -70,7 +70,7 @@ extension ChoreResponse {
     init?(model: ChoreModel) {
         var parserAsignee: [String] = []
         for asign in model.asignee {
-            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role),\(asign.userId)"
+            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role == "" ? "-" : asign.role),\(asign.userId)"
             parserAsignee.append(str)
         }
         
