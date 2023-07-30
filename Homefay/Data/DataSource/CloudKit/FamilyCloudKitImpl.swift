@@ -21,6 +21,22 @@ struct FamilyCloudKitImpl: FamilyDataSource {
         return recordID
     }
     
+    func findByCode(familyCode: String) async throws -> FamilyModel {
+        let query = CKQuery(
+            recordType: FamilyKeys.type.rawValue,
+            predicate: NSPredicate(format: "uniqueId == %@", familyCode)
+        )
+        query.sortDescriptors = []
+        
+        let result = try await container.records(matching: query)
+        let records = result.matchResults.compactMap{ try? $0.1.get() }
+        
+        guard let res = FamilyResponse(record: records[0]) else {
+            throw CKError(.unknownItem)
+        }
+        return res.toModel
+    }
+    
     func findAll() async throws -> [FamilyModel] {
         let query = CKQuery(
             recordType: FamilyKeys.type.rawValue,

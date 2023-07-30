@@ -10,6 +10,11 @@ import Foundation
 struct ProfileRepositoryImpl: ProfileRepository {
     var dataSource: ProfileDataSource
     
+    func findAll(familyId: UUID) async throws -> [ProfileModel] {
+        let data = try await dataSource.findAll(familyId: familyId)
+        return data
+    }
+    
     func find(userId: UUID) async throws -> ProfileModel {
         let data = try await dataSource.find(userId: userId)
         return data

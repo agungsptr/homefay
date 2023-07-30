@@ -61,9 +61,9 @@ extension FamilyResponse {
             name: model.name,
             uniqueId: model.uniqueId,
             idCreatedBy: model.createdBy.id!.uuidString,
-            nameCreatedBy: model.createdBy.name,
+            nameCreatedBy: model.createdBy.name ?? "",
             appleIdCreatedBy: model.createdBy.appleId,
-            emailCreatedBy: model.createdBy.email
+            emailCreatedBy: model.createdBy.email ?? ""
         )
     }
 }

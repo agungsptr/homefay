@@ -21,10 +21,10 @@ struct TaskListCloudKitImpl: TaskListDataSource {
         return recordID
     }
     
-    func findAll() async throws -> [TaskListModel] {
+    func findAll(familyId: UUID) async throws -> [TaskListModel] {
         let query = CKQuery(
             recordType: TaskListKeys.type.rawValue,
-            predicate: NSPredicate(value: true)
+            predicate: NSPredicate(format: "familyId == %@", familyId.uuidString)
         )
         query.sortDescriptors = []
         
@@ -43,9 +43,11 @@ struct TaskListCloudKitImpl: TaskListDataSource {
     }
     
     func create(taskList: TaskListModel) async throws -> TaskListModel {
+        print("data model: \(taskList)")
         guard let taskListResponse = TaskListResponse(model: taskList) else {
             throw CKError(.unknownItem)
         }
+        print("Data: \(taskListResponse)")
         let req = try await container.save(taskListResponse.record)
         
         try await Task.sleep(nanoseconds: 1_000_000_000)

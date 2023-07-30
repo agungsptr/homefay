@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class CreateFamilyViewModel: ObservableObject {
@@ -21,6 +22,10 @@ class CreateFamilyViewModel: ObservableObject {
     )
     @Published var familyCode = ""
     @Published var role = ""
+    
+    @AppStorage("userFamilyId") var userFamilyId: String = ""
+    @AppStorage("userFamilyName") var userFamilyName: String = ""
+    @AppStorage("userId") var userId: String = ""
     
     private lazy var db: FamilyUseCase = FamilyInjec().useCase()
     private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
@@ -55,7 +60,6 @@ class CreateFamilyViewModel: ObservableObject {
             
             let _ = await self.dbProfile.create(
                 profile: ProfileModel(
-                    preference: [""],
                     availSun: [Date(), Date()],
                     availMon: [Date(), Date()],
                     availTue: [Date(), Date()],
@@ -65,7 +69,34 @@ class CreateFamilyViewModel: ObservableObject {
                     availSat: [Date(), Date()],
                     dnd: false,
                     userId: self.family.createdBy.id!.uuidString,
-                    avatar: ""
+                    familyId: data.id!.uuidString
+                )
+            )
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func join(familyCode: String) async {
+        let res = await self.db.findByCode(familyCode: familyCode)
+        switch res {
+        case .success(let data):
+            self.family = data
+            userFamilyId = data.id!.uuidString
+            userFamilyName = data.name
+            
+            let res = await self.dbProfile.create(
+                profile: ProfileModel(
+                    availSun: [Date(), Date()],
+                    availMon: [Date(), Date()],
+                    availTue: [Date(), Date()],
+                    availWed: [Date(), Date()],
+                    availThu: [Date(), Date()],
+                    availFri: [Date(), Date()],
+                    availSat: [Date(), Date()],
+                    dnd: false,
+                    userId: userId,
+                    familyId: data.id!.uuidString
                 )
             )
         case .failure(let error):

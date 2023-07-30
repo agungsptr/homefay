@@ -11,8 +11,8 @@ import CloudKit
 struct FamilyMemberResponse {
     var id: CKRecord.ID?
     var familyId: String
-    var name: String
-    var role: String
+    var name: String?
+    var role: String?
     var userId: String
 }
 

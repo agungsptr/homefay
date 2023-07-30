@@ -17,6 +17,7 @@ struct MainView: View {
     
     // Family Info
     @AppStorage("userFamilyId") var userFamilyId: String = ""
+    @AppStorage("userFamilyName") var userFamilyName: String = ""
     
     var body: some View {
         TabView {

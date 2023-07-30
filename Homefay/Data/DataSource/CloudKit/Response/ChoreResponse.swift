@@ -19,6 +19,7 @@ struct ChoreResponse {
     var depend: [String]
     var isDone: Bool
     var listId: String
+    var familyId: String
 }
 
 enum ChoreKeys: String {
@@ -33,6 +34,7 @@ enum ChoreKeys: String {
     case depend
     case isDone
     case listId
+    case familyId
 }
 
 extension ChoreResponse {
@@ -46,7 +48,8 @@ extension ChoreResponse {
             let asignee = record[ChoreKeys.asignee.rawValue] as? [String],
             let depend = record[ChoreKeys.depend.rawValue] as? [String],
             let isDone = record[ChoreKeys.isDone.rawValue] as? Bool,
-            let listId = record[ChoreKeys.listId.rawValue] as? String
+            let listId = record[ChoreKeys.listId.rawValue] as? String,
+            let familyId = record[ChoreKeys.familyId.rawValue] as? String
         else {
             return nil
         }
@@ -61,7 +64,8 @@ extension ChoreResponse {
             asignee: asignee,
             depend: depend,
             isDone: isDone,
-            listId: listId
+            listId: listId,
+            familyId: familyId
         )
     }
 }
@@ -70,7 +74,7 @@ extension ChoreResponse {
     init?(model: ChoreModel) {
         var parserAsignee: [String] = []
         for asign in model.asignee {
-            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role == "" ? "-" : asign.role),\(asign.userId)"
+            let str = "\(asign.id?.uuidString ?? "-"),\(asign.familyId),\(asign.name ?? "-"),\(asign.role ?? "-"),\(asign.userId)"
             parserAsignee.append(str)
         }
         
@@ -83,7 +87,8 @@ extension ChoreResponse {
             asignee: parserAsignee,
             depend: model.depend,
             isDone: model.isDone,
-            listId: model.listId
+            listId: model.listId,
+            familyId: model.familyId
         )
     }
 }
@@ -100,6 +105,7 @@ extension ChoreResponse {
         record[ChoreKeys.depend.rawValue] = depend
         record[ChoreKeys.isDone.rawValue] = isDone
         record[ChoreKeys.listId.rawValue] = listId
+        record[ChoreKeys.familyId.rawValue] = familyId
         return record
     }
     
@@ -107,15 +113,16 @@ extension ChoreResponse {
         var parserAsignee: [FamilyMemberModel] = []
         for asign in asignee {
             let arrData = asign.split(separator: ",")
-            print("DEBUG: \(arrData)")
-            let user = FamilyMemberModel(
-                id: UUID(uuidString: "\(arrData[0])"),
-                familyId: "\(arrData[1])",
-                name: "\(arrData[2])",
-                role: "\(arrData[3])",
-                userId: "\(arrData[4])"
-            )
-            parserAsignee.append(user)
+            if arrData.count == 5 {
+                let user = FamilyMemberModel(
+                    id: UUID(uuidString: "\(arrData[0])"),
+                    familyId: "\(arrData[1])",
+                    name: "\(arrData[2])",
+                    role: "\(arrData[3])",
+                    userId: "\(arrData[4])"
+                )
+                parserAsignee.append(user)
+            }
         }
         
         return ChoreModel(
@@ -128,7 +135,8 @@ extension ChoreResponse {
             asignee: parserAsignee,
             depend: depend,
             isDone: isDone,
-            listId: listId
+            listId: listId,
+            familyId: familyId
         )
     }
 }

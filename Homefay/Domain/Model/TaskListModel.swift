@@ -12,4 +12,5 @@ struct TaskListModel: Identifiable {
     var name: String
     var asigneeName: String
     var asigneeId: String
+    var familyId: String
 }

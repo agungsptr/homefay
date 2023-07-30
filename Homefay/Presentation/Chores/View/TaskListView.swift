@@ -32,7 +32,7 @@ struct TaskListView: View {
                                             dificulty: ch.level,
                                             startTime: ch.startTime,
                                             endTime: ch.endTime,
-                                            asignRole: ch.asignee.count > 0 ? ch.asignee[0].role : "Dad"
+                                            asignRole: ch.asignee.count > 0 ? ch.asignee[0].role ?? "Dad" : "Dad"
                                         )
                                     }
                                 }
@@ -54,6 +54,7 @@ struct TaskListView: View {
                     Task {
                         isLoading.toggle()
                         await vm.findAll()
+                        print(vm.chores)
                         isLoading.toggle()
                     }
                 }
@@ -88,12 +89,20 @@ struct TaskListView: View {
                                             HStack(spacing: 18) {
                                                 ForEach(vm.familyMembers, id: \.self.id) { fm in
                                                     Button {
-                                                        selected = fm
+                                                        selected = FamilyMemberModel(
+                                                            familyId: fm.familyId,
+                                                            role: fm.avatar,
+                                                            userId: fm.userId
+                                                        )
                                                     } label: {
                                                         Badge(
-                                                            imgName: fm.role,
-                                                            name: fm.name,
-                                                            selected: fm.userId == selected?.userId
+                                                            imgName: fm.avatar ?? "",
+                                                            name: fm.name ?? "",
+                                                            selected: selected == FamilyMemberModel(
+                                                                familyId: fm.familyId,
+                                                                role: fm.avatar,
+                                                                userId: fm.userId
+                                                            )
                                                         )
                                                     }
                                                 }

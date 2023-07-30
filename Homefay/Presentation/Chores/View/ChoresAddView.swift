@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct ChoresAddView: View {
-    @State private var isLoading = false
     @StateObject private var vm = TaskListViewModel()
     
+    @State private var isLoading = false
     @State private var sliderValue: Double = 0
     @State private var selected: [FamilyMemberModel] = []
     
     @Environment(\.dismiss) var dismiss
+    
+    var isEdit = false
+    var chore: ChoreModel?
     
     var body: some View {
         NavigationStack {
@@ -163,12 +166,12 @@ struct ChoresAddView: View {
                                     HStack(spacing: 18) {
                                         ForEach(vm.familyMembers, id: \.self.id) { fm in
                                             Button {
-                                                selected.append(fm)
+                                                selected.append(FamilyMemberModel(familyId: fm.familyId, name: fm.name, role: fm.avatar, userId: fm.userId))
                                             } label: {
                                                 Badge(
-                                                    imgName: fm.role,
-                                                    name: fm.name,
-                                                    selected: selected.contains(fm)
+                                                    imgName: fm.avatar ?? "",
+                                                    name: fm.name ?? "",
+                                                    selected: selected.contains(FamilyMemberModel(familyId: fm.familyId, name: fm.name, role: fm.avatar, userId: fm.userId))
                                                 )
                                             }
                                         }
@@ -205,7 +208,11 @@ struct ChoresAddView: View {
                 Button {
                     Task {
                         vm.chore.asignee = selected
-                        await vm.createChore()
+                        if isEdit, let data = chore {
+                            await vm.editChore(id: data.id!, data: vm.chore)
+                        } else {
+                            await vm.createChore()
+                        }
                         dismiss()
                     }
                 } label: {
@@ -215,15 +222,18 @@ struct ChoresAddView: View {
                         .background(Color(red: 0.03, green: 0.27, blue: 0.58))
                         .cornerRadius(10)
                         .overlay {
-                            Text("Add")
+                            Text(isEdit ? "Save" : "Create")
                                 .foregroundColor(.white)
                         }
                 }
             }
-            .navigationTitle("Create Chores")
+            .navigationTitle("\(isEdit ? "Edit" : "Create") Chores")
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            if let ch = chore {
+                vm.chore = ch
+            }
             Task {
                 isLoading.toggle()
                 await vm.findAll()
@@ -267,9 +277,14 @@ private struct Badge: View {
                 .cornerRadius(50)
                 .overlay {
                     if selected {
-                        Text(Image(systemName: "checkmark"))
-                            .fontWeight(.bold)
-                            .foregroundColor(Color(red: 0.03, green: 0.27, blue: 0.58))
+                        ZStack {
+                            Circle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 50, height: 50)
+                            Text(Image(systemName: "checkmark"))
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(red: 0.03, green: 0.27, blue: 0.58))
+                        }
                     }
                 }
             Text(name)

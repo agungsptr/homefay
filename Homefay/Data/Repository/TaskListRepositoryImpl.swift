@@ -10,8 +10,8 @@ import Foundation
 struct TaskListRepositoryImpl: TaskListRepository {
     var dataSource: TaskListDataSource
     
-    func findAll() async throws -> [TaskListModel] {
-        let data = try await dataSource.findAll()
+    func findAll(familyId: UUID) async throws -> [TaskListModel] {
+        let data = try await dataSource.findAll(familyId: familyId)
         return data
     }
     

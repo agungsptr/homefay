@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ChoreUseCase {
-    func findAll() async -> Result<[ChoreModel], FetchDataError>
+    func findAll(familyId: UUID) async -> Result<[ChoreModel], FetchDataError>
     func create(chore: ChoreModel) async -> Result<ChoreModel, FetchDataError>
     func delete(id: UUID) async -> Result<Bool, FetchDataError>
     func update(id: UUID, chore: ChoreModel) async -> Result<Bool, FetchDataError>
@@ -17,9 +17,9 @@ protocol ChoreUseCase {
 struct ChoreUseCaseImpl: ChoreUseCase {
     var repository: ChoreRepository
     
-    func findAll() async -> Result<[ChoreModel], FetchDataError> {
+    func findAll(familyId: UUID) async -> Result<[ChoreModel], FetchDataError> {
         do {
-            let data = try await repository.findAll()
+            let data = try await repository.findAll(familyId: familyId)
             return .success(data)
         } catch {
             print(error.localizedDescription)

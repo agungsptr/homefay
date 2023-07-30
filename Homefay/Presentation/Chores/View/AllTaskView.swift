@@ -28,7 +28,7 @@ struct AllTaskView: View {
                                     dificulty: ch.level,
                                     startTime: ch.startTime,
                                     endTime: ch.endTime,
-                                    asignRole: ch.asignee.count > 0 ? ch.asignee[0].role : "Dad"
+                                    asignRole: ch.asignee.count > 0 ? ch.asignee[0].role ?? "Dad" : "Dad"
                                 )
                             }
                         }
@@ -45,14 +45,18 @@ struct AllTaskView: View {
                 Section {
                     ForEach(vm.chores) { ch in
                         if ch.isDone {
-                            ChoreItemView(
-                                ctg: ch.category,
-                                title: ch.title,
-                                dificulty: ch.level,
-                                startTime: ch.startTime,
-                                endTime: ch.endTime,
-                                asignRole: ch.asignee.count > 0 ? ch.asignee[0].role : ""
-                            )
+                            NavigationLink {
+                                ChoresDetailView(chore: ch)
+                            } label: {
+                                ChoreItemView(
+                                    ctg: ch.category,
+                                    title: ch.title,
+                                    dificulty: ch.level,
+                                    startTime: ch.startTime,
+                                    endTime: ch.endTime,
+                                    asignRole: ch.asignee.count > 0 ? ch.asignee[0].role ?? "Dad" : "Dad"
+                                )
+                            }
                         }
                     }
                 } header: {
@@ -83,6 +87,8 @@ struct AllTaskView: View {
 
 private struct LoadingView: View {
     var body: some View {
+        Color.white
+            .ignoresSafeArea(.all)
         ZStack {
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .black))

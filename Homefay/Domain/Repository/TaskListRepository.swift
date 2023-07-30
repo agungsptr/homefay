@@ -8,7 +8,7 @@
 import Foundation
 
 protocol TaskListRepository {
-    func findAll() async throws -> [TaskListModel]
+    func findAll(familyId: UUID) async throws -> [TaskListModel]
     func create(taskList: TaskListModel) async throws -> TaskListModel
     func delete(id: UUID) async throws -> Void
     func update(id: UUID, taskList: TaskListModel) async throws -> TaskListModel

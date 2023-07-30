@@ -6,15 +6,17 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class FamilyViewModel: ObservableObject {
-    @Published var families: [FamilyMemberModel] = []
+    @Published var families: [ProfileModel] = []
+    @AppStorage("userFamilyId") var userFamilyId: String = ""
     
-    private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
+    private lazy var db = ProfileInjec().useCase()
     
     func findAll() async {
-        let res = await self.dbFamilyMember.findAll()
+        let res = await self.db.findAll(familyId: UUID(uuidString: userFamilyId)!)
         switch res {
         case .success(let data):
             self.families = data

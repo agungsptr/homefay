@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ChoresDetailView: View {
+    @StateObject private var vm = TaskListViewModel()
     @State private var dependency = false
+    @Environment(\.dismiss) var dismiss
     
     var chore: ChoreModel
     
@@ -77,13 +79,20 @@ struct ChoresDetailView: View {
                     }
                 }
                 Button {
-                    
+                    Task {
+                        if chore.isDone {
+                            await vm.markIsUndone(id: chore.id!, data: chore)
+                        } else {
+                            await vm.markIsDone(id: chore.id!, data: chore)
+                        }
+                        dismiss()
+                    }
                 } label: {
                     ZStack{
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color("PrimaryColor"))
                             .frame(width: 358, height: 50, alignment: .center)
-                        Text("Mark as Done")
+                        Text("Mark as \(chore.isDone ? "Undone" : "Done")")
                             .foregroundColor(.white)
                     }
                 }
@@ -91,19 +100,51 @@ struct ChoresDetailView: View {
                 
             }
             .navigationTitle("Detail Chores")
+            .toolbar {
+                Menu {
+                    NavigationLink {
+                        ChoresAddView(isEdit: true, chore: chore)
+                    } label: {
+                        Button {
+                            vm.chore = chore
+                        } label: {
+                            Label {
+                                Text("Edit")
+                            } icon: {
+                                Image(systemName: "pencil")
+                            }
+                        }
+                    }
+                    
+                    Button {
+                        Task {
+                            await vm.deleteChore(id: chore.id!)
+                            dismiss()
+                        }
+                    } label: {
+                        Label {
+                            Text("Delete")
+                        } icon: {
+                            Image(systemName: "trash")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
         }
     }
     
     func asigneeText(_ data: [FamilyMemberModel]) -> String {
         let text = data.map { member in
-            member.name
+            member.name ?? ""
         }
         return text.joined(separator: ", ")
     }
 }
 
-struct ChoresDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ChoresDetailView(chore: ChoreModel(title: "Wash Dishes", category: "Dished Cleaning", level: "Mid", startTime: Date(), endTime: Date(), asignee: [FamilyMemberModel(familyId: "id", name: "name", role: "Dad", userId: "id"), FamilyMemberModel(familyId: "id", name: "name2", role: "Dad", userId: "id")], depend: [], isDone: false, listId: "id"))
-    }
-}
+//struct ChoresDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChoresDetailView(chore: ChoreModel(title: "Wash Dishes", category: "Dished Cleaning", level: "Mid", startTime: Date(), endTime: Date(), asignee: [FamilyMemberModel(familyId: "id", name: "name", role: "Dad", userId: "id"), FamilyMemberModel(familyId: "id", name: "name2", role: "Dad", userId: "id")], depend: [], isDone: false, listId: "id"))
+//    }
+//}

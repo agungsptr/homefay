@@ -8,6 +8,12 @@
 import Foundation
 
 struct FamilyRepositoryImpl: FamilyRepository {
+    
+    func findByCode(familyCode: String) async throws -> FamilyModel {
+        let data = try await dataSource.findByCode(familyCode: familyCode)
+        return data
+    }
+    
     var dataSource: FamilyDataSource
     
     func findAll() async throws -> [FamilyModel] {

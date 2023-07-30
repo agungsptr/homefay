@@ -9,7 +9,7 @@ import Foundation
 
 struct UserModel: Identifiable {
     var id: UUID?
-    var name: String
+    var name: String?
     var appleId: String
-    var email: String
+    var email: String?
 }

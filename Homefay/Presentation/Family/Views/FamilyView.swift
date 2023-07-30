@@ -13,18 +13,25 @@ struct FamilyView: View {
     @StateObject private var vm = FamilyViewModel()
     @State private var isLoading = false
     
+    @AppStorage("userFamilyName") var userFamilyName: String = ""
+    @AppStorage("userId") var userId: String = ""
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 List {
                     ForEach(vm.families) { fm in
-                        ItemFamily(name: fm.name, img: fm.role)
+                        NavigationLink {
+                            FamilyDetailView(familyMember: fm)
+                        } label: {
+                            ItemFamily(fm: fm, meFlag: fm.userId == userId)
+                        }
                     }
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color("surfaceColor"))
                 .cornerRadius(10)
-                .navigationTitle("Keluarga Haji Agung")
+                .navigationTitle("\(userFamilyName) Family")
                 .padding()
                 .toolbar {
                     //                //MARK: Edit Button
@@ -48,16 +55,16 @@ struct FamilyView: View {
                     //MARK: Share link Button
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
-                            //
+                            
                         } label: {
                             Image(systemName: "link")
                         }
                     }
                 }
                 .padding(.horizontal,0)
-            }
-            if isLoading {
-                LoadingView()
+                if isLoading {
+                    LoadingView()
+                }
             }
         }
         .onAppear {
@@ -81,43 +88,49 @@ private struct LoadingView: View {
 }
 
 struct ItemFamily: View {
-    var name: String
-    var img: String?
+    var fm: ProfileModel
+    var meFlag: Bool
+    
+    @State private var img: String = ""
     
     var body: some View {
         HStack {
-            Image(img ?? "profil")
+            Image(img)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 67)
             VStack(alignment: .leading) {
-                Text(name)
-                    .font(.title2)
+                Text("\(fm.name ?? "")\(meFlag ? " (Me)" : "")")
+                    .font(.title3)
                     .fontWeight(.bold)
-                HStack {
-                    Image("Garden")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                    Image("Shopping")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                    Image("PetCare")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                    Image("Kitchen").resizable()
-                        .frame(width: 20, height: 20)
-                    Image("HouseCleaning").resizable()
-                        .frame(width: 20, height: 20)
+                ScrollView(.horizontal) {
+                    HStack {
+                        if let interest = fm.interest {
+                            ForEach(interest, id: \.self) { i in
+                                Image(i)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            }
+                        }
+                    }
                 }
+                .cornerRadius(16)
+                .scrollIndicators(.hidden)
             }
-            
             Spacer()
-            
             VStack {
-                Text("available")
+                Text(fm.dnd ? "Busy" : "Available")
                     .padding(.vertical)
-                    .foregroundColor(Color("mainColor"))
+                    .foregroundColor(fm.dnd ? .gray : Color("mainColor"))
+                    .font(.caption2)
                 Spacer()
+            }
+        }
+        .onAppear {
+            if fm.avatar == "" {
+                img = "Dad"
+            } else {
+                img = fm.avatar ?? "Dad"
             }
         }
     }

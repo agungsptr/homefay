@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import SwiftUI
 
 @MainActor
 class TaskListViewModel: ObservableObject {
-    @Published var familyMembers: [FamilyMemberModel] = []
+    @Published var familyMembers: [ProfileModel] = []
     @Published var taskLists: [TaskListModel] = []
     @Published var chores: [ChoreModel] = []
     @Published var taskList = TaskListModel(
-        name: "", asigneeName: "", asigneeId: ""
+        name: "", asigneeName: "", asigneeId: "", familyId: ""
     )
     @Published var chore = ChoreModel(
         title: "",
@@ -24,15 +25,18 @@ class TaskListViewModel: ObservableObject {
         asignee: [],
         depend: [""],
         isDone: false,
-        listId: ""
+        listId: "",
+        familyId: ""
     )
     
-    private lazy var dbFamilyMember = FamilyMemberInjec().useCase()
+    @AppStorage("userFamilyId") var userFamilyId: String = ""
+    
+    private lazy var dbFamilyMember = ProfileInjec().useCase()
     private lazy var dbTaskList = TaskListInjec().useCase()
     private lazy var dbChores = ChoreInjec().useCase()
     
     func findAllFamilyMember() async {
-        let res = await self.dbFamilyMember.findAll()
+        let res = await self.dbFamilyMember.findAll(familyId: UUID(uuidString: userFamilyId)!)
         switch res {
         case .success(let data):
             self.familyMembers = data
@@ -43,7 +47,7 @@ class TaskListViewModel: ObservableObject {
     
     func findAll() async {
         // fetch data family member
-        let resFamilyMember = await self.dbFamilyMember.findAll()
+        let resFamilyMember = await self.dbFamilyMember.findAll(familyId: UUID(uuidString: userFamilyId)!)
         switch resFamilyMember {
         case .success(let dataFamilyMember):
             self.familyMembers = dataFamilyMember
@@ -52,7 +56,7 @@ class TaskListViewModel: ObservableObject {
         }
         
         // fetch data tasklist
-        let resTaskList = await self.dbTaskList.findAll()
+        let resTaskList = await self.dbTaskList.findAll(familyId: UUID(uuidString: userFamilyId)!)
         switch resTaskList {
         case .success(let dataTaskList):
             self.taskLists = dataTaskList
@@ -61,7 +65,7 @@ class TaskListViewModel: ObservableObject {
         }
         
         // fetch data chore
-        let resChore = await self.dbChores.findAll()
+        let resChore = await self.dbChores.findAll(familyId: UUID(uuidString: userFamilyId)!)
         switch resChore {
         case .success(let dataChore):
             self.chores = dataChore
@@ -71,6 +75,7 @@ class TaskListViewModel: ObservableObject {
     }
     
     func createTaskList() async {
+        self.taskList.familyId = userFamilyId
         let res = await self.dbTaskList.create(taskList: taskList)
         switch res {
         case .success(let data):
@@ -78,6 +83,7 @@ class TaskListViewModel: ObservableObject {
             self.taskList.name = data.name
             self.taskList.asigneeName = data.asigneeName
             self.taskList.asigneeId = data.asigneeId
+            self.taskList.familyId = userFamilyId
             await self.findAll()
         case .failure(let error):
             print(error)
@@ -85,6 +91,7 @@ class TaskListViewModel: ObservableObject {
     }
     
     func createChore() async {
+        self.chore.familyId = userFamilyId
         let res = await self.dbChores.create(chore: chore)
         switch res {
         case .success(let data):
@@ -96,37 +103,92 @@ class TaskListViewModel: ObservableObject {
             self.chore.endTime = data.endTime
             self.chore.asignee = data.asignee
             self.chore.depend = data.depend
+            self.chore.familyId = userFamilyId
             await self.findAll()
         case .failure(let error):
             print(error)
         }
     }
     
-//    func delete(id: UUID) async {
-//        let res = await self.db.delete(id: id)
-//        switch res {
-//        case .success(_):
-//            await self.findAll()
-//        case .failure(let error):
-//            print(error)
-//        }
-//    }
-//
-//    func update(id: UUID) async {
-//        let res = await self.db.update(
-//            id: id,
-//            family: FamilyModel(
-//                id: nil,
-//                name: "update",
-//                uniqueId: "",
-//                createdBy: self.family.createdBy
-//            )
-//        )
-//        switch res {
-//        case .success(_):
-//            await self.findAll()
-//        case .failure(let error):
-//            print(error)
-//        }
-//    }
+    func deleteChore(id: UUID) async {
+        let res = await self.dbChores.delete(id: id)
+        switch res {
+        case .success(_):
+            print("success delete")
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func markIsDone(id: UUID, data: ChoreModel) async {
+        let res = await self.dbChores.update(
+            id: id,
+            chore: ChoreModel(
+                title: data.title,
+                category: data.category,
+                level: data.level,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                asignee: data.asignee,
+                depend: data.depend,
+                isDone: true,
+                listId: data.listId,
+                familyId: data.familyId
+            )
+        )
+        switch res {
+        case .success(_):
+            await self.findAll()
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func markIsUndone(id: UUID, data: ChoreModel) async {
+        let res = await self.dbChores.update(
+            id: id,
+            chore: ChoreModel(
+                title: data.title,
+                category: data.category,
+                level: data.level,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                asignee: data.asignee,
+                depend: data.depend,
+                isDone: false,
+                listId: data.listId,
+                familyId: data.familyId
+            )
+        )
+        switch res {
+        case .success(_):
+            await self.findAll()
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func editChore(id: UUID, data: ChoreModel) async {
+        let res = await self.dbChores.update(
+            id: id,
+            chore: ChoreModel(
+                title: data.title,
+                category: data.category,
+                level: data.level,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                asignee: data.asignee,
+                depend: data.depend,
+                isDone: data.isDone,
+                listId: data.listId,
+                familyId: data.familyId
+            )
+        )
+        switch res {
+        case .success(_):
+            await self.findAll()
+        case .failure(let error):
+            print(error)
+        }
+    }
 }

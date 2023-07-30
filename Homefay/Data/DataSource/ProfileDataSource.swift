@@ -8,6 +8,7 @@
 import Foundation
 
 protocol ProfileDataSource {
+    func findAll(familyId: UUID) async throws -> [ProfileModel]
     func find(userId: UUID) async throws -> ProfileModel
     func create(profile: ProfileModel) async throws -> ProfileModel
     func delete(id: UUID) async throws -> Void

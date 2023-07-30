@@ -15,6 +15,7 @@ struct JoinFamilyView: View {
     @State private var isShowAlertFamilyCode = false
     @State private var isLoading = false
     @State private var navigation = false
+    @State private var familyCode = ""
     
     // User credential
     @AppStorage("userId") var userId: String = "" // this value get by cloudkit not by auth apple
@@ -24,6 +25,7 @@ struct JoinFamilyView: View {
     
     // Family Info
     @AppStorage("userFamilyId") var userFamilyId: String = ""
+    @AppStorage("userFamilyName") var userFamilyName: String = ""
     
     var body: some View {
         ZStack {
@@ -45,23 +47,22 @@ struct JoinFamilyView: View {
                     }
                     .alert("Create Family", isPresented: $isShowAlertCreate) {
                         TextField("Family Name", text: $vm.family.name)
-//                        TextField("Role", text: $vm.role)
+                        Button {
+                            isShowAlertCreate.toggle()
+                        } label: {
+                            Text("Cancel")
+                        }
                         Button {
                             Task {
                                 isLoading.toggle()
                                 await vm.create()
+                                userFamilyName = vm.family.name
                                 isLoading.toggle()
                                 isShowAlertFamilyCode.toggle()
                             }
                         } label: {
                             Text("Create")
                                 .fontWeight(.bold)
-                        }
-                        
-                        Button {
-                            isShowAlertCreate.toggle()
-                        } label: {
-                            Text("Cancel")
                         }
                     } message: {
                         Text("Please input the name for the family you want to create.")
@@ -87,17 +88,22 @@ struct JoinFamilyView: View {
                         )
                     }
                     .alert("Join Family", isPresented: $isShowAlertJoin) {
-                        TextField("Family Code", text: $vm.familyCode)
-                        Button {
-                            isShowAlertJoin.toggle()
-                        } label: {
-                            Text("Join")
-                                .fontWeight(.bold)
-                        }
+                        TextField("Family Code", text: $familyCode)
                         Button {
                             isShowAlertJoin.toggle()
                         } label: {
                             Text("Cancel")
+                        }
+                        Button {
+                            Task {
+                                isLoading.toggle()
+                                await vm.join(familyCode: familyCode)
+                                isLoading.toggle()
+                                isShowAlertJoin.toggle()
+                            }
+                        } label: {
+                            Text("Join")
+                                .fontWeight(.bold)
                         }
                     } message: {
                         Text("Enter the specified family link to access.")

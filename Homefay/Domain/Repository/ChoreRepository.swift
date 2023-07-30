@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ChoreRepository {
-    func findAll() async throws -> [ChoreModel]
+    func findAll(familyId: UUID) async throws -> [ChoreModel]
     func create(chore: ChoreModel) async throws -> ChoreModel
     func delete(id: UUID) async throws -> Void
     func update(id: UUID, chore: ChoreModel) async throws -> ChoreModel

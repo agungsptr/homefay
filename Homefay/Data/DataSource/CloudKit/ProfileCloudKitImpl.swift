@@ -21,19 +21,49 @@ struct ProfileCloudKitImpl: ProfileDataSource {
         return recordID
     }
     
+    func findAll(familyId: UUID) async throws -> [ProfileModel] {
+        let query = CKQuery(
+            recordType: ProfileKeys.type.rawValue,
+            predicate: NSPredicate(format: "familyId == %@", familyId.uuidString)
+        )
+        query.sortDescriptors = []
+        
+        let result = try await container.records(matching: query)
+        let records = result.matchResults.compactMap{ try? $0.1.get() }
+        
+        var profiles: [ProfileModel] = []
+        for record in records {
+            guard let profile = ProfileResponse(record: record) else {
+                continue
+            }
+            profiles.append(profile.toModel)
+        }
+        
+        return profiles
+    }
+    
     func find(userId: UUID) async throws -> ProfileModel {
-        let record = try await container.record(for: uuidToCKRecordId(userId))
-        guard let res = ProfileResponse(record: record) else {
+        let query = CKQuery(
+            recordType: ProfileKeys.type.rawValue,
+            predicate: NSPredicate(format: "userId == %@", userId.uuidString)
+        )
+        query.sortDescriptors = []
+        
+        let result = try await container.records(matching: query)
+        let records = result.matchResults.compactMap{ try? $0.1.get() }
+        
+//        let record = try await container.record(for: uuidToCKRecordId(userId))
+        guard let res = ProfileResponse(record: records[0]) else {
             throw CKError(.unknownItem)
         }
         return res.toModel
     }
     
     func create(profile: ProfileModel) async throws -> ProfileModel {
-        guard let userResponse = ProfileResponse(model: profile) else {
+        guard let profileResponse = ProfileResponse(model: profile) else {
             throw CKError(.unknownItem)
         }
-        let req = try await container.save(userResponse.record)
+        let req = try await container.save(profileResponse.record)
         
         try await Task.sleep(nanoseconds: 1_000_000_000)
         guard let res = ProfileResponse(record: req) else {
@@ -56,8 +86,12 @@ struct ProfileCloudKitImpl: ProfileDataSource {
         record[ProfileKeys.dnd.rawValue] = profile.dnd
         record[ProfileKeys.userId.rawValue] = profile.userId
         record[ProfileKeys.avatar.rawValue] = profile.avatar
+        record[ProfileKeys.familyId.rawValue] = profile.familyId
+        record[ProfileKeys.name.rawValue] = profile.name
         
         let req = try await container.save(record)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
         guard let res = ProfileResponse(record: req) else {
             throw CKError(.unknownItem)
         }

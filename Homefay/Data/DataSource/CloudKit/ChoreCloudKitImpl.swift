@@ -21,10 +21,10 @@ struct ChoreCloudKitImpl: ChoreDataSource {
         return recordID
     }
     
-    func findAll() async throws -> [ChoreModel] {
+    func findAll(familyId: UUID) async throws -> [ChoreModel] {
         let query = CKQuery(
             recordType: ChoreKeys.type.rawValue,
-            predicate: NSPredicate(value: true)
+            predicate: NSPredicate(format: "familyId == %@", familyId.uuidString)
         )
         query.sortDescriptors = []
         
@@ -68,7 +68,7 @@ struct ChoreCloudKitImpl: ChoreDataSource {
         
         var parserAsignee: [String] = []
         for asign in chore.asignee {
-            let str = "\(asign.id?.uuidString ?? ""),\(asign.familyId),\(asign.name),\(asign.role),\(asign.userId)"
+            let str = "\(asign.id?.uuidString ?? "-"),\(asign.familyId),\(asign.name ?? "-"),\(asign.role ?? "-"),\(asign.userId)"
             parserAsignee.append(str)
         }
         record[ChoreKeys.asignee.rawValue] = parserAsignee

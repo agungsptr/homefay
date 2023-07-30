@@ -13,6 +13,7 @@ struct TaskListResponse {
     var name: String
     var asigneeName: String
     var asigneeId: String
+    var familyId: String
 }
 
 enum TaskListKeys: String {
@@ -21,6 +22,7 @@ enum TaskListKeys: String {
     case name
     case asigneeName
     case asigneeId
+    case familyId
 }
 
 extension TaskListResponse {
@@ -28,7 +30,8 @@ extension TaskListResponse {
         guard
             let name = record[TaskListKeys.name.rawValue] as? String,
             let asigneeName = record[TaskListKeys.asigneeName.rawValue] as? String,
-            let asigneeId = record[TaskListKeys.asigneeId.rawValue] as? String
+            let asigneeId = record[TaskListKeys.asigneeId.rawValue] as? String,
+            let familyId = record[TaskListKeys.familyId.rawValue] as? String
         else {
             return nil
         }
@@ -37,7 +40,8 @@ extension TaskListResponse {
             id: record.recordID,
             name: name,
             asigneeName: asigneeName,
-            asigneeId: asigneeId
+            asigneeId: asigneeId,
+            familyId: familyId
         )
     }
 }
@@ -47,7 +51,8 @@ extension TaskListResponse {
         self.init(
             name: model.name,
             asigneeName: model.asigneeName,
-            asigneeId: model.asigneeId
+            asigneeId: model.asigneeId,
+            familyId: model.familyId
         )
     }
 }
@@ -58,6 +63,7 @@ extension TaskListResponse {
         record[TaskListKeys.name.rawValue] = name
         record[TaskListKeys.asigneeName.rawValue] = asigneeName
         record[TaskListKeys.asigneeId.rawValue] = asigneeId
+        record[TaskListKeys.familyId.rawValue] = familyId
         return record
     }
     
@@ -66,7 +72,8 @@ extension TaskListResponse {
             id: UUID(uuidString: id!.recordName),
             name: name,
             asigneeName: asigneeName,
-            asigneeId: asigneeId
+            asigneeId: asigneeId,
+            familyId: familyId
         )
     }
 }

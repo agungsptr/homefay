@@ -8,7 +8,7 @@
 import Foundation
 
 protocol TaskListUseCase {
-    func findAll() async -> Result<[TaskListModel], FetchDataError>
+    func findAll(familyId: UUID) async -> Result<[TaskListModel], FetchDataError>
     func create(taskList: TaskListModel) async -> Result<TaskListModel, FetchDataError>
     func delete(id: UUID) async -> Result<Bool, FetchDataError>
     func update(id: UUID, taskList: TaskListModel) async -> Result<Bool, FetchDataError>
@@ -17,9 +17,9 @@ protocol TaskListUseCase {
 struct TaskListUseCaseImpl: TaskListUseCase {
     var repository: TaskListRepository
     
-    func findAll() async -> Result<[TaskListModel], FetchDataError> {
+    func findAll(familyId: UUID) async -> Result<[TaskListModel], FetchDataError> {
         do {
-            let data = try await repository.findAll()
+            let data = try await repository.findAll(familyId: familyId)
             return .success(data)
         } catch {
             print(error.localizedDescription)
@@ -29,6 +29,7 @@ struct TaskListUseCaseImpl: TaskListUseCase {
     
     func create(taskList: TaskListModel) async -> Result<TaskListModel, FetchDataError> {
         do {
+            print("debug dari repo: \(taskList)")
             let data = try await repository.create(taskList: taskList)
             return .success(data)
         } catch {

@@ -36,10 +36,14 @@ struct SignInView: View {
                     case .success(let auth):
                         switch auth.credential {
                         case let cred as ASAuthorizationAppleIDCredential:
-                            let firstName = cred.fullName?.givenName ?? ""
-                            let lastName = cred.fullName?.familyName ?? ""
+                            if let firstName = cred.fullName?.givenName,
+                               let  lastName = cred.fullName?.familyName
+                            {
+                                vm.user.name = "\(firstName) \(lastName)"
+                            } else {
+                                vm.user.name = ""
+                            }
                             
-                            vm.user.name = "\(firstName) \(lastName)"
                             vm.user.appleId = cred.user
                             vm.user.email = cred.email ?? ""
                             Task {

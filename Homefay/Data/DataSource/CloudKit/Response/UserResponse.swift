@@ -10,9 +10,9 @@ import CloudKit
 
 struct UserResponse {
     var id: CKRecord.ID?
-    var name: String
+    var name: String?
     var appleId: String
-    var email: String
+    var email: String?
 }
 
 enum UserKeys: String {

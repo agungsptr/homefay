@@ -10,8 +10,8 @@ import Foundation
 struct ChoreRepositoryImpl: ChoreRepository {
     var dataSource: ChoreDataSource
     
-    func findAll() async throws -> [ChoreModel] {
-        let data = try await dataSource.findAll()
+    func findAll(familyId: UUID) async throws -> [ChoreModel] {
+        let data = try await dataSource.findAll(familyId: familyId)
         return data
     }
     

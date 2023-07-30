@@ -22,6 +22,8 @@ struct ProfileResponse {
     var dnd: Bool
     var userId: String
     var avatar: String?
+    var familyId: String
+    var name: String?
 }
 
 enum ProfileKeys: String {
@@ -39,41 +41,47 @@ enum ProfileKeys: String {
     case dnd
     case userId
     case avatar
+    case familyId
+    case name
 }
 
 extension ProfileResponse {
     init?(record: CKRecord) {
-        guard
-            let interest = record[ProfileKeys.interest.rawValue] as? [String],
-            let preference = record[ProfileKeys.preference.rawValue] as? [String],
-            let availSun = record[ProfileKeys.availSun.rawValue] as? [Date],
-            let availMon = record[ProfileKeys.availMon.rawValue] as? [Date],
-            let availTue = record[ProfileKeys.availTue.rawValue] as? [Date],
-            let availWed = record[ProfileKeys.availWed.rawValue] as? [Date],
-            let availThu = record[ProfileKeys.availThu.rawValue] as? [Date],
-            let availFri = record[ProfileKeys.availFri.rawValue] as? [Date],
-            let availSat = record[ProfileKeys.availSat.rawValue] as? [Date],
-            let dnd = record[ProfileKeys.dnd.rawValue] as? Bool,
-            let userId = record[ProfileKeys.userId.rawValue] as? String,
-            let avatar = record[ProfileKeys.avatar.rawValue] as? String
-        else {
-            return nil
-        }
+        //        guard
+        //            let interest = record[ProfileKeys.interest.rawValue] as? [String],
+        //            let preference = record[ProfileKeys.preference.rawValue] as? [String],
+        //            let availSun = record[ProfileKeys.availSun.rawValue] as? [Date],
+        //            let availMon = record[ProfileKeys.availMon.rawValue] as? [Date],
+        //            let availTue = record[ProfileKeys.availTue.rawValue] as? [Date],
+        //            let availWed = record[ProfileKeys.availWed.rawValue] as? [Date],
+        //            let availThu = record[ProfileKeys.availThu.rawValue] as? [Date],
+        //            let availFri = record[ProfileKeys.availFri.rawValue] as? [Date],
+        //            let availSat = record[ProfileKeys.availSat.rawValue] as? [Date],
+        //            let dnd = record[ProfileKeys.dnd.rawValue] as? Bool,
+        //            let userId = record[ProfileKeys.userId.rawValue] as? String,
+        //            let avatar = record[ProfileKeys.avatar.rawValue] as? String,
+        //            let familyId = record[ProfileKeys.familyId.rawValue] as? String,
+        //            let name = record[ProfileKeys.name.rawValue] as? String
+        //        else {
+        //            return nil
+        //        }
         
         self.init(
             id: record.recordID,
-            interest: interest,
-            preference: preference,
-            availSun: availSun,
-            availMon: availMon,
-            availTue: availTue,
-            availWed: availWed,
-            availThu: availThu,
-            availFri: availFri,
-            availSat: availSat,
-            dnd: dnd,
-            userId: userId,
-            avatar: avatar
+            interest: record[ProfileKeys.interest.rawValue] as? [String],
+            preference: record[ProfileKeys.preference.rawValue] as? [String],
+            availSun: record[ProfileKeys.availSun.rawValue] as? [Date],
+            availMon: record[ProfileKeys.availMon.rawValue] as? [Date],
+            availTue: record[ProfileKeys.availTue.rawValue] as? [Date],
+            availWed: record[ProfileKeys.availWed.rawValue] as? [Date],
+            availThu: record[ProfileKeys.availThu.rawValue] as? [Date],
+            availFri: record[ProfileKeys.availFri.rawValue] as? [Date],
+            availSat: record[ProfileKeys.availSat.rawValue] as? [Date],
+            dnd: record[ProfileKeys.dnd.rawValue] as? Bool ?? false,
+            userId: record[ProfileKeys.userId.rawValue] as? String ?? "",
+            avatar: record[ProfileKeys.avatar.rawValue] as? String,
+            familyId: record[ProfileKeys.familyId.rawValue] as? String ?? "",
+            name: record[ProfileKeys.name.rawValue] as? String
         )
     }
 }
@@ -92,7 +100,9 @@ extension ProfileResponse {
             availSat: model.availSat,
             dnd: model.dnd,
             userId: model.userId,
-            avatar: model.avatar
+            avatar: model.avatar,
+            familyId: model.familyId,
+            name: model.name
         )
     }
 }
@@ -112,6 +122,8 @@ extension ProfileResponse {
         record[ProfileKeys.dnd.rawValue] = dnd
         record[ProfileKeys.userId.rawValue] = userId
         record[ProfileKeys.avatar.rawValue] = avatar
+        record[ProfileKeys.familyId.rawValue] = familyId
+        record[ProfileKeys.name.rawValue] = name
         return record
     }
     
@@ -129,7 +141,9 @@ extension ProfileResponse {
             availSat: availSat,
             dnd: dnd,
             userId: userId,
-            avatar: avatar
+            avatar: avatar,
+            familyId: familyId,
+            name: name
         )
     }
 }

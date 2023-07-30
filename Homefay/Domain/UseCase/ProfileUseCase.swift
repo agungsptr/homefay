@@ -8,6 +8,7 @@
 import Foundation
 
 protocol ProfileUseCase {
+    func findAll(familyId: UUID) async -> Result<[ProfileModel], FetchDataError>
     func find(userId: UUID) async -> Result<ProfileModel, FetchDataError>
     func create(profile: ProfileModel) async -> Result<ProfileModel, FetchDataError>
     func delete(id: UUID) async -> Result<Bool, FetchDataError>
@@ -16,6 +17,16 @@ protocol ProfileUseCase {
 
 struct ProfileUseCaseImpl: ProfileUseCase {
     var repository: ProfileRepository
+    
+    func findAll(familyId: UUID) async -> Result<[ProfileModel], FetchDataError> {
+        do {
+            let data = try await repository.findAll(familyId: familyId)
+            return .success(data)
+        } catch {
+            print(error.localizedDescription)
+            return .failure(.FetchError)
+        }
+    }
     
     func find(userId: UUID) async -> Result<ProfileModel, FetchDataError> {
         do {

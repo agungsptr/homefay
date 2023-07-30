@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProfileModel: Identifiable {
+struct ProfileModel: Identifiable, Hashable {
     var id: UUID?
     var interest: [String]?
     var preference: [String]?
@@ -21,4 +21,6 @@ struct ProfileModel: Identifiable {
     var dnd: Bool
     var userId: String
     var avatar: String?
+    var familyId: String
+    var name: String?
 }
