@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct FamilyMemberModel: Identifiable {
-    let id: UUID
-    let name: String
-    let username: String
-    let isSupervisor: Bool
-    let isLeader: Bool
+struct FamilyMemberModel: Identifiable, Hashable {
+    var id: UUID?
+    var familyId: String
+    var name: String?
+    var role: String?
+    var userId: String
 }
